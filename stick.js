@@ -1,3 +1,8 @@
+/*
+Author : 윤찬규 
+Date : 2023-05-12
+Description : 공을 튀기게 하는 막대입니다.
+*/
 export class Stick {
     constructor(x, y, width, height, speed) {
         this.x = x;
@@ -30,7 +35,7 @@ export class Stick {
 
     /*
     Author : 윤찬규 
-    Data : 2023-05-12
+    Date : 2023-05-12
     Description : 막대를 그리는 함수입니다.
 
     context를 인자로 받아와서 해당 context에 그립니다.

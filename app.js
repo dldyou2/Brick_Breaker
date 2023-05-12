@@ -75,12 +75,13 @@ Date : 2023-05-12
 Description : 실제 게임이 작동되는 함수
 */
 function gamePlay() {
-    ball = new Ball(150, 300, 15, 30, 5);
+    ball = new Ball(300, 300, 15, 30, 5);
     stick = new Stick(220, 300, 10, 125, 10);
     let interval; // 공 움직임 함수 호출 interval
     function move() {
         ball.move(ctx);
         stick.move(ctx, upPressed - downPressed);
+        checkBallConflict();
         // test call
         // console.log("PRESSED: " + upPressed - downPressed);
         if(ball.isLeft()) {
@@ -97,6 +98,27 @@ function gamePlay() {
     
     // test call
     console.log("game is playing now");
+}
+
+/*
+Author : 윤찬규
+Date : 2023-05-12
+Description : 공이 특정 오브젝트와 충돌 되었을 때의 행동을 정하는 함수
+
+매 프레임마다 충돌 되었는지 확인 -> 충돌 되었다면 필요한 행동 진행
+*/
+function checkBallConflict() {
+    BallAndStick();
+}
+// 공과 막대의 충돌이 있었는가?
+function BallAndStick() {
+    if((ball.x - ball.r <= stick.x + stick.width / 2 && !(ball.x + ball.r <= stick.x + stick.width / 2))
+    && (ball.y >= stick.y - stick.height / 2 && ball.y <= stick.y + stick.height / 2)) {
+        ball.conflictStick((ball.y - stick.y) / stick.height * 2);
+
+        // test call
+        console.log("ball conflict [Stick]");
+    } 
 }
 
 /*
