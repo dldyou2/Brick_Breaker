@@ -7,8 +7,9 @@ Description: 초기화 함수
 
 맨 처음 한 번 실행시키는 함수입니다.
 */
-function Init() {
-    CanvasInit();
+function init() {
+    canvasInit();
+    addEventListeners();
 
     // test call
     console.log("initialize complete");
@@ -21,7 +22,7 @@ Description: 캔버스 초기화 함수
 
 canvas와 ctx를 초기화 후 ctx에서 그리기를 시작합니다.
 */
-function CanvasInit() {
+function canvasInit() {
     canvas = document.getElementById("myCanvas");
     ctx = canvas.getContext("2d");
 
@@ -36,9 +37,9 @@ Description : 인게임 함수
 
 게임 플레이의 전제를 관장합니다.
 */
-function InGame(difficulty) {
-    InGameInit(difficulty);
-    GamePlay();
+function inGame(difficulty) {
+    inGameInit(difficulty);
+    gamePlay();
 
     // test call
     console.log("ingame complete")
@@ -51,7 +52,7 @@ Description : 인게임 초기화 함수
 
 게임 시작에 필요한 것들을 초기화하는 함수입니다.
 */
-function InGameInit(difficulty) {
+function inGameInit(difficulty) {
     if(difficulty == 1) {
 
     }
@@ -70,7 +71,7 @@ Author : 윤찬규
 Date : 2023-05-12
 Description : 실제 게임이 작동되는 함수
 */
-function GamePlay() {
+function gamePlay() {
     let ball = new Ball(150, 300, 15, 30, 5);
     let interval;
     function move() {
@@ -92,7 +93,11 @@ function GamePlay() {
 }
 
 window.onload = () => {
-    Init();
+    init();
     // 난이도를 선택하면 아래 함수를 실행합니다.
-    InGame(1); 
+    inGame(1); 
+}
+
+function addEventListeners() {
+    document.addEventListener("keydown", keyPressed, false);
 }
