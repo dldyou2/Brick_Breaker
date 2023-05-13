@@ -1,30 +1,6 @@
 # Brick_Breaker
 Web Programming Team Project
 
-## Commit Rules
-> Commit Rule
-
-```
-Type : Subject
-Body
-Footer
-```
-> Commit Types
-
-```
-feat  : 새로운 기능 추가
-fix   : 버그 수정
-docs  : 문서 수정
-style : 코드 formatting, 세미콜론(;) 누락, 코드 변경이 없는 경우
-test  : 테스트 코드, 리팽토링 테스트 코드 추가
-```
-> Example
-```
-// 벽돌이 부서지는 기능 추가했을 때
-feat: breaking brick
-description~~~~
-Author: 홍길동
-```
 ## Coding Rules
 > Indent Size
 
