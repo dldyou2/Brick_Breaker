@@ -19,7 +19,6 @@ export class Stick {
     Description : flag가 1이면 위로 / -1이면 아래로 막대를 움직입니다.
     */
     move(ctx, flag) {
-        ctx.clearRect(this.x - this.width / 2, this.y - this.height / 2, this.width, this.height);
         if(flag == 1) {
             if(this.y > 0) {
                 this.y -= this.speed;

@@ -34,7 +34,6 @@ export class Ball {
     왼쪽 벽을 제외한 나머지 벽들에 대한 반사와 각 / 속도에 따른 좌표 변화를 적용합니다.
     */
     move(ctx) {
-        ctx.clearRect(this.x - this.r - 1, this.y - this.r - 1, this.r * 2 + 2, this.r * 2 + 2);
         if(this.x + this.r >= 1400) {
             this.angle = (540 - this.angle) % 360; 
         } 
