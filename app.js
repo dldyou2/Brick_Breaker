@@ -3,6 +3,8 @@ class App {
     constructor() {
         // test call
         console.log("App Loaded");
+        this.canvas = document.getElementById("myCanvas");
+        this.ctx = this.canvas.getContext("2d");
 
 
         this.init();
@@ -29,12 +31,13 @@ class App {
     게임 플레이의 전제를 관장합니다.
     */
     inGame(difficulty) {
-        this.gm = new gameManager(difficulty);
+        this.gm = new gameManager(this.ctx, difficulty);
         this.gm.startGame();
         
         // test call
         console.log("inGame complete")
     }
+
 }
 
 window.onload = () => {

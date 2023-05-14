@@ -10,11 +10,10 @@ Description : 게임을 관리하는 함수입니다.
 식물의 설치, 재화 등을 관리합니다.
 */
 export class gameManager {
-    constructor(difficulty) {
+    constructor(ctx, difficulty) {
         // test call
         console.log("gameManager loaded");
-        this.canvas = document.getElementById("myCanvas");
-        this.ctx = this.canvas.getContext("2d");
+        this.ctx = ctx;
         
         this.difficulty = difficulty;
         this.maxWave = 5;
@@ -42,7 +41,8 @@ export class gameManager {
         }
 
         this.animation = null;
-        this.upPressed = false, this.downPressed = false; // 키가 눌렸는지  
+        this.upPressed = false;
+        this.downPressed = false; // 키가 눌렸는지  
     }
 
     startGame() {
@@ -62,7 +62,7 @@ export class gameManager {
             // test call
             console.log("ball is out")
         }
-        this.move(this.ctx);
+        this.move();
         this.checkBallConflict();
     }
 
@@ -71,13 +71,13 @@ export class gameManager {
     Date : 2023-05-14
     Description : 움직임과 관련된 함수입니다.
     */
-    move(ctx) {
-        this.ball.move(ctx);
-        this.stick.move(ctx, this.upPressed - this.downPressed);
+    move() {
+        this.ball.move(this.ctx);
+        this.stick.move(this.ctx, this.upPressed - this.downPressed);
         for(let i = 0; i < 5; i++) {
             for(let j = 0; j < 100; j++) {
                 if(this.zombies[i][j].hp > 0) {
-                    this.zombies[i][j].move(ctx);
+                    this.zombies[i][j].move(this.ctx);
                     this.minimumPosOfLines[i] = Math.min(this.minimumPosOfLines[i], this.zombies[i][j].x);
                 }
             }
@@ -218,8 +218,8 @@ export class gameManager {
     Description : 이벤트 리스너를 추가하는 함수
     */
     addEventListeners() {
-        document.addEventListener("keydown", this.keyDownHandler, false);
-        document.addEventListener("keyup", this.keyUpHandler, false);
+        document.addEventListener("keydown", this.keyDownHandler.bind(this), false);
+        document.addEventListener("keyup", this.keyUpHandler.bind(this), false);
     }
     /*******************************************************************************************************/
 }
