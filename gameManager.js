@@ -29,6 +29,7 @@ export class gameManager {
         this.spawnEntitesLinesPerWave = this.difficulty * this.curWave * 5;
         this.minimumSpawnEntitiesPerLine = this.difficulty;
         this.maximumSpawnEntitiesPerLine = Math.min(this.difficulty * 2, 5);
+        this.remainZombie = 0;
         this.spawnPos = [0, 0, 0, 0, 0];
 
         this.minimumPosOfLinesX = [1600, 1600, 1600, 1600, 1600];
@@ -160,6 +161,7 @@ export class gameManager {
                 for(let j = 0; j < 100; j++) {
                     if(this.zombies[i][j].hp <= 0) {
                         this.zombies[i][j] = new Zombie(1400, i * 101 + 120, 50, 80, 1, 10, 1);
+                        this.remainZombie += 1;
                         break;
                     }
                 }
@@ -197,13 +199,14 @@ export class gameManager {
     BallAndZombie() {
         const range_s = [80, 181, 282, 383, 484];
         const range_e = [160, 261, 362, 463, 564];
+        const nextPos = this.ball.getNextPos();
         const ballPos = {
-            x: this.ball.x,
-            y: this.ball.y,
-            top: this.ball.y - this.ball.r,
-            right: this.ball.x + this.ball.r,
-            bottom: this.ball.y + this.ball.r,
-            left: this.ball.x - this.ball.r
+            x: nextPos.x,
+            y: nextPos.y,
+            top: nextPos.y - this.ball.r,
+            right: nextPos.x + this.ball.r,
+            bottom: nextPos.y + this.ball.r,
+            left: nextPos.x - this.ball.r
         };
 
         for(let i = 0; i < 5; i++) {
@@ -256,7 +259,7 @@ export class gameManager {
                             this.ball.conflictLeftRight();
                         }
                     }
-                    else if((zombiePos.top <= ballPos.y && ballPos.y <= zombiePos.bottom)) {
+                    if((zombiePos.top <= ballPos.y && ballPos.y <= zombiePos.bottom)) {
                         if((ballPos.x < zombiePos.x && ballPos.right >= zombiePos.left) ||
                         (ballPos.x > zombiePos.x && ballPos.left <= zombiePos.right)) {
                             this.ball.conflictLeftRight();

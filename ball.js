@@ -47,6 +47,14 @@ export class Ball {
         this.draw(ctx);
     }
 
+    getNextPos() {
+        let radian = this.#d2r(this.angle);
+        return {
+            x: this.x + Math.cos(radian) * this.speed, 
+            y: this.y + Math.sin(radian) * this.speed
+        }; 
+    }
+
     /*
     Author : 윤찬규 
     Date : 2023-05-12
