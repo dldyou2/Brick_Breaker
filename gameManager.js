@@ -22,7 +22,7 @@ export class gameManager {
         this.timer = 0;
         
         this.ball = new Ball(300, 300, 15, 0, 15);
-        this.stick = new Stick(220, 300, 10, 125, 20);
+        this.stick = new Stick(220, 300, 20, 125, 20);
 
         this.gold = 0;
 
@@ -31,7 +31,8 @@ export class gameManager {
         this.maximumSpawnEntitiesPerLine = Math.min(this.difficulty * 2, 5);
         this.spawnPos = [0, 0, 0, 0, 0];
 
-        this.minimumPosOfLines = [1600, 1600, 1600, 1600, 1600];
+        this.minimumPosOfLinesX = [1600, 1600, 1600, 1600, 1600];
+        this.minimumPosOfLinesIdx = [-1, -1, -1, -1, -1];
         this.zombies = new Array(5);
         for(let i = 0; i < 5; i++) {
             this.zombies[i] = new Array();
@@ -78,7 +79,10 @@ export class gameManager {
             for(let j = 0; j < 100; j++) {
                 if(this.zombies[i][j].hp > 0) {
                     this.zombies[i][j].move(this.ctx);
-                    this.minimumPosOfLines[i] = Math.min(this.minimumPosOfLines[i], this.zombies[i][j].x);
+                    if(this.zombies[i][j].x < this.minimumPosOfLinesX[i]) {
+                        this.minimumPosOfLinesX[i] = this.zombies[i][j].x;
+                        this.minimumPosOfLinesIdx[i] = j;
+                    }
                 }
             }
         }
@@ -115,8 +119,10 @@ export class gameManager {
         this.waveManage();
         this.spawnZombie();
         this.timer = 0;
+
         // test call
-        console.log("MIN POS: " + this.minimumPosOfLines);
+        console.log("MIN POS: " + this.minimumPosOfLinesX);
+        console.log("MIN IDX: " + this.minimumPosOfLinesIdx);
     }
 
     shuffleSpawnPos() {
@@ -142,11 +148,18 @@ export class gameManager {
     }
 
     spawnZombie() {
+        /*
+        line 0: 80-160
+        line 1: 181-261
+        line 2: 282-362
+        line 3: 383-463
+        line 4: 484-564
+        */
         for(let i = 0; i < 5; i++) {
             if(this.spawnPos[i] == 1) {
                 for(let j = 0; j < 100; j++) {
                     if(this.zombies[i][j].hp <= 0) {
-                        this.zombies[i][j] = new Zombie(1400, i * 101 + 120, 30, 80, 1, 10, 1);
+                        this.zombies[i][j] = new Zombie(1400, i * 101 + 120, 50, 80, 1, 10, 1);
                         break;
                     }
                 }
@@ -166,17 +179,100 @@ export class gameManager {
     /*******************************************************************************************************/
     checkBallConflict() {
         this.BallAndStick();
+        this.BallAndZombie();
     }
     // 공과 막대의 충돌이 있었는가?
     BallAndStick() {
         if((this.ball.x - this.ball.r <= this.stick.x + this.stick.width / 2 && 
         !(this.ball.x + this.ball.r <= this.stick.x + this.stick.width / 2))
-        && (this.ball.y >= this.stick.y - this.stick.height / 2 && this.ball.y <= this.stick.y + this.stick.height / 2)) {
+        && (this.ball.y + this.ball.r >= this.stick.y - this.stick.height / 2 && 
+        this.ball.y - this.ball.r <= this.stick.y + this.stick.height / 2)) {
             this.ball.conflictStick((this.ball.y - this.stick.y) / this.stick.height * 2);
 
             // test call
             console.log("ball conflict [Stick]");
         } 
+    }
+    // 공과 좀비의 충돌이 있었는가?
+    BallAndZombie() {
+        const range_s = [80, 181, 282, 383, 484];
+        const range_e = [160, 261, 362, 463, 564];
+        const ballPos = {
+            x: this.ball.x,
+            y: this.ball.y,
+            top: this.ball.y - this.ball.r,
+            right: this.ball.x + this.ball.r,
+            bottom: this.ball.y + this.ball.r,
+            left: this.ball.x - this.ball.r
+        };
+
+        for(let i = 0; i < 5; i++) {
+            if(ballPos.bottom >= range_s[i] && ballPos.top <= range_e[i]) {
+                // 해당 줄의 좀비들과 충돌 검사
+                for(let j = 0; j < 100; j++) {
+                    const zombiePos = {
+                        x: this.zombies[i][j].x,
+                        y: this.zombies[i][j].y,
+                        top: this.zombies[i][j].y - this.zombies[i][j].height / 2,
+                        right: this.zombies[i][j].x + this.zombies[i][j].width / 2,
+                        bottom: this.zombies[i][j].y + this.zombies[i][j].height / 2,
+                        left: this.zombies[i][j].x - this.zombies[i][j].width / 2
+                    }
+                    const r2 = this.ball.r * this.ball.r;
+                    const dist2UL = (zombiePos.left - ballPos.x) ** 2 + (zombiePos.top - ballPos.y) ** 2;
+                    const dist2UR = (zombiePos.right - ballPos.x) ** 2 + (zombiePos.top - ballPos.y) ** 2;
+                    const dist2DL = (zombiePos.left - ballPos.x) ** 2 + (zombiePos.bottom - ballPos.y) ** 2;
+                    const dist2DR = (zombiePos.right - ballPos.x) ** 2 + (zombiePos.bottom - ballPos.y) ** 2;
+
+                    if(dist2UL <= r2) {
+                        if(ballPos.y - zombiePos.top > zombiePos.left - ballPos.x) {
+                            this.ball.conflictTopBottom();
+                        }
+                        else {
+                            this.ball.conflictLeftRight();
+                        }
+                    }
+                    else if(dist2UR <= r2) {
+                        if(ballPos.y - zombiePos.top > ballPos.x - zombiePos.right) {
+                            this.ball.conflictTopBottom();
+                        }
+                        else {
+                            this.ball.conflictLeftRight();
+                        }
+                    }
+                    else if(dist2DL <= r2) {
+                        if(zombiePos.bottom - ballPos.y > zombiePos.left - ballPos.x) {
+                            this.ball.conflictTopBottom();
+                        }
+                        else {
+                            this.ball.conflictLeftRight();
+                        }
+                    }
+                    else if(dist2DR <= r2) {
+                        if(zombiePos.bottom - ballPos.y > ballPos.x - zombiePos.right) {
+                            this.ball.conflictTopBottom();
+                        }
+                        else {
+                            this.ball.conflictLeftRight();
+                        }
+                    }
+                    else if((zombiePos.top <= ballPos.y && ballPos.y <= zombiePos.bottom)) {
+                        if((ballPos.x < zombiePos.x && ballPos.right >= zombiePos.left) ||
+                        (ballPos.x > zombiePos.x && ballPos.left <= zombiePos.right)) {
+                            this.ball.conflictLeftRight();
+                        }
+                    }
+                    else if((zombiePos.left <= ballPos.x && ballPos.x <= zombiePos.right)) {
+                        if((ballPos.y < zombiePos.y && ballPos.bottom >= zombiePos.top) ||
+                        (ballPos.y > zombiePos.y && ballPos.top <= zombiePos.bottom)) {
+                            this.ball.conflictTopBottom();
+                        }
+                    }
+                }
+            }
+        }
+
+
     }
     /*
     Author : 윤찬규

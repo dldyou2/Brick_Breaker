@@ -35,7 +35,7 @@ export class Ball {
     */
     move(ctx) {
         if(this.x + this.r >= 1400) {
-            this.angle = (540 - this.angle) % 360; 
+            this.conflictLeftRight();
         } 
         else if(this.y - this.r <= 0 || 
             this.y + this.r >= 600) {
@@ -82,5 +82,18 @@ export class Ball {
     */
     conflictStick(ratio) {
         this.angle = Math.floor((80 * ratio + 360)) % 360;
+    }
+    /*
+    Author : 윤찬규
+    Date : 2023-05-14
+    Description : 공과 벽돌의 충돌 함수입니다.
+    */
+    conflictLeftRight() {
+        this.angle = (540 - this.angle) % 360; 
+        console.log("ball conflict [LEFT RIGHT]");
+    }
+    conflictTopBottom() {
+        this.angle = 360 - this.angle;
+        console.log("ball conflict [TOP BOTTOM]");
     }
 }
