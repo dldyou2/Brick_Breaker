@@ -42,7 +42,8 @@ export class gameManager {
 
         this.animation = null;
         this.upPressed = false;
-        this.downPressed = false; // 키가 눌렸는지  
+        this.downPressed = false; // 키가 눌렸는지
+        this.gameOverScreen = null;  
     }
 
     startGame() {
@@ -59,6 +60,7 @@ export class gameManager {
         this.generateZombie();
         if(this.ball.isLeft()) {
             window.cancelAnimationFrame(this.animation);
+            this.showGameOverScreen();
             // test call
             console.log("ball is out")
         }
@@ -222,4 +224,54 @@ export class gameManager {
         document.addEventListener("keyup", this.keyUpHandler.bind(this), false);
     }
     /*******************************************************************************************************/
+
+    /*
+    Author : 이건
+    Date : 2023-05-14
+    Description : 게임 실패시 게임 실패 화면을 출력하는 함수
+    */
+    showGameOverScreen() {
+        this.initGameOverScreen();
+        $("#game-display").append(this.gameOverScreen);
+        // 출력 애니메이션
+        $(this.gameOverScreen).hide().fadeIn(2000);
+    };
+
+    /*
+    Author : 이건
+    Date : 2023-05-14
+    Description : 게임 실패 화면을 초기화하는 함수
+    */
+    initGameOverScreen() {
+        this.gameOverScreen = document.createElement("div");
+        $(this.gameOverScreen).addClass("gameOverScreen");
+
+        let gameOverImage = document.createElement("img");
+        $(gameOverImage).attr("id", "gameOverImage");
+
+        let buttonDiv = document.createElement("div");
+        $(buttonDiv).attr("id", "buttonDiv");
+
+        let retry = document.createElement("img");
+        $(retry).attr("id", "retry-button");
+        $(retry).on("click", function () {
+            $("#game-display .gameOverScreen").remove();
+            // 게임 재실행
+            
+        });
+        $(retry).css("margin-right", "20px");
+
+        let exit = document.createElement("img");
+        $(exit).attr("id", "exit-button");
+        $(exit).on("click", function () {
+            $("#game-display .gameOverScreen").remove();
+            // 메인 화면
+             
+        });
+
+        $(this.gameOverScreen).append(gameOverImage);
+        $(this.gameOverScreen).append(buttonDiv);
+        $(buttonDiv).append(retry);
+        $(buttonDiv).append(exit);
+    }
 }
