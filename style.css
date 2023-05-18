@@ -6,7 +6,7 @@
 #game-display {
     width: 100%;
     text-align: center;
-    
+    position: relative;
     background-color: #3f3f3f3f;
 }
 
@@ -16,4 +16,34 @@
 
     background-color: #8f8f8f8f;
     background-image: url("./images/In-Game/background1.jpg");
+}
+
+.gameOverScreen {
+    position: absolute;
+    top: 0;
+    left : 0;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    padding-top: 150px;
+    background = none;
+}
+
+#gameOverImage {
+    content: url("./images/In-Game/game_over.png");
+}
+
+#buttonDiv {
+    width: 100%;
+    height: 300px;
+    text-align: center;
+    padding-top: 70px;
+}
+
+#retry-button {
+    content: url("./images/In-Game/retry.png");
+}
+
+#exit-button {
+    content: url("./images/In-Game/exit.png");
 }
