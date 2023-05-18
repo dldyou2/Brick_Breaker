@@ -41,18 +41,14 @@ export class Ball {
             this.y + this.r >= 600) {
             this.angle = 360 - this.angle;
         } 
-        let radian = this.#d2r(this.angle);
-        this.x += Math.cos(radian) * this.speed;
-        this.y += Math.sin(radian) * this.speed; 
+        this.nextPos();
         this.draw(ctx);
     }
 
-    getNextPos() {
+    nextPos() {
         let radian = this.#d2r(this.angle);
-        return {
-            x: this.x + Math.cos(radian) * this.speed, 
-            y: this.y + Math.sin(radian) * this.speed
-        }; 
+        this.x += Math.cos(radian) * this.speed;
+        this.y += Math.sin(radian) * this.speed; 
     }
 
     /*

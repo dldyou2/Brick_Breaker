@@ -199,21 +199,14 @@ export class gameManager {
     BallAndZombie() {
         const range_s = [80, 181, 282, 383, 484];
         const range_e = [160, 261, 362, 463, 564];
-        const nextPos = this.ball.getNextPos();
-        const ballPos = {
-            x: nextPos.x,
-            y: nextPos.y,
-            top: nextPos.y - this.ball.r,
-            right: nextPos.x + this.ball.r,
-            bottom: nextPos.y + this.ball.r,
-            left: nextPos.x - this.ball.r
-        };
+        let zombiePos;
 
         for(let i = 0; i < 5; i++) {
-            if(ballPos.bottom >= range_s[i] && ballPos.top <= range_e[i]) {
+            if(this.ball.y + this.ball.r >= range_s[i] && this.ball.y - this.ball.r <= range_e[i]) {
                 // 해당 줄의 좀비들과 충돌 검사
                 for(let j = 0; j < 100; j++) {
-                    const zombiePos = {
+                    if(this.zombies[i][j].hp <= 0) continue;
+                    zombiePos = {
                         x: this.zombies[i][j].x,
                         y: this.zombies[i][j].y,
                         top: this.zombies[i][j].y - this.zombies[i][j].height / 2,
@@ -221,61 +214,21 @@ export class gameManager {
                         bottom: this.zombies[i][j].y + this.zombies[i][j].height / 2,
                         left: this.zombies[i][j].x - this.zombies[i][j].width / 2
                     }
-                    const r2 = this.ball.r * this.ball.r;
-                    const dist2UL = (zombiePos.left - ballPos.x) ** 2 + (zombiePos.top - ballPos.y) ** 2;
-                    const dist2UR = (zombiePos.right - ballPos.x) ** 2 + (zombiePos.top - ballPos.y) ** 2;
-                    const dist2DL = (zombiePos.left - ballPos.x) ** 2 + (zombiePos.bottom - ballPos.y) ** 2;
-                    const dist2DR = (zombiePos.right - ballPos.x) ** 2 + (zombiePos.bottom - ballPos.y) ** 2;
-
-                    if(dist2UL <= r2) {
-                        if(ballPos.y - zombiePos.top > zombiePos.left - ballPos.x) {
-                            this.ball.conflictTopBottom();
-                        }
-                        else {
+                    if((zombiePos.top <= this.ball.y && this.ball.y <= zombiePos.bottom)) {
+                        if((this.ball.x < zombiePos.x && this.ball.x + this.ball.r >= zombiePos.left) ||
+                        (this.ball.x > zombiePos.x && this.ball.x - this.ball.r <= zombiePos.right)) {
                             this.ball.conflictLeftRight();
                         }
                     }
-                    else if(dist2UR <= r2) {
-                        if(ballPos.y - zombiePos.top > ballPos.x - zombiePos.right) {
-                            this.ball.conflictTopBottom();
-                        }
-                        else {
-                            this.ball.conflictLeftRight();
-                        }
-                    }
-                    else if(dist2DL <= r2) {
-                        if(zombiePos.bottom - ballPos.y > zombiePos.left - ballPos.x) {
-                            this.ball.conflictTopBottom();
-                        }
-                        else {
-                            this.ball.conflictLeftRight();
-                        }
-                    }
-                    else if(dist2DR <= r2) {
-                        if(zombiePos.bottom - ballPos.y > ballPos.x - zombiePos.right) {
-                            this.ball.conflictTopBottom();
-                        }
-                        else {
-                            this.ball.conflictLeftRight();
-                        }
-                    }
-                    if((zombiePos.top <= ballPos.y && ballPos.y <= zombiePos.bottom)) {
-                        if((ballPos.x < zombiePos.x && ballPos.right >= zombiePos.left) ||
-                        (ballPos.x > zombiePos.x && ballPos.left <= zombiePos.right)) {
-                            this.ball.conflictLeftRight();
-                        }
-                    }
-                    else if((zombiePos.left <= ballPos.x && ballPos.x <= zombiePos.right)) {
-                        if((ballPos.y < zombiePos.y && ballPos.bottom >= zombiePos.top) ||
-                        (ballPos.y > zombiePos.y && ballPos.top <= zombiePos.bottom)) {
+                    else if((zombiePos.left <= this.ball.x && this.ball.x <= zombiePos.right)) {
+                        if((this.ball.y < zombiePos.y && this.ball.y + this.ball.r >= zombiePos.top) ||
+                        (this.ball.y > zombiePos.y && this.ball.y - this.ball.r <= zombiePos.bottom)) {
                             this.ball.conflictTopBottom();
                         }
                     }
                 }
             }
         }
-
-
     }
     /*
     Author : 윤찬규
