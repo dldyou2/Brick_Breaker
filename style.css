@@ -5,17 +5,33 @@
 
 #game-display {
     width: 100%;
-    text-align: center;
     position: relative;
     background-color: #3f3f3f3f;
 }
 
-#myCanvas {
+#game-screen {
     width: 1400px;
     height: 600px;
+    margin: 0 auto;
+}
+
+#myCanvas {
+    width: 100%;
 
     background-color: #8f8f8f8f;
     background-image: url("./images/In-Game/background1.jpg");
+    background-repeat: no-repeat;
+}
+
+#bar {
+    position: absolute;
+    top: 0; bottom: 0;
+    width: 125px;
+    height: 600px;
+
+    background-image: url("./images/In-Game/bar/bar-ex.png");
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
 }
 
 .gameOverScreen {
@@ -26,7 +42,7 @@
     height: 100%;
     text-align: center;
     padding-top: 150px;
-    background = none;
+    background: none;
 }
 
 #gameOverImage {

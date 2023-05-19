@@ -74,7 +74,7 @@ export class Ball {
     닿으면 1 아니면 0을 리턴합니다. 벽의 기준은 해당 좌표값 왼쪽입니다.
     */
     isLeft() {
-        return this.x <= 0;
+        return this.x <= 125;
     }
 
     /*
