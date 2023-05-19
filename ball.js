@@ -35,16 +35,20 @@ export class Ball {
     */
     move(ctx) {
         if(this.x + this.r >= 1400) {
-            this.angle = (540 - this.angle) % 360; 
+            this.conflictLeftRight();
         } 
         else if(this.y - this.r <= 0 || 
             this.y + this.r >= 600) {
             this.angle = 360 - this.angle;
         } 
+        this.nextPos();
+        this.draw(ctx);
+    }
+
+    nextPos() {
         let radian = this.#d2r(this.angle);
         this.x += Math.cos(radian) * this.speed;
         this.y += Math.sin(radian) * this.speed; 
-        this.draw(ctx);
     }
 
     /*
@@ -70,7 +74,7 @@ export class Ball {
     닿으면 1 아니면 0을 리턴합니다. 벽의 기준은 해당 좌표값 왼쪽입니다.
     */
     isLeft() {
-        return this.x <= 0;
+        return this.x <= 125;
     }
 
     /*
@@ -82,5 +86,18 @@ export class Ball {
     */
     conflictStick(ratio) {
         this.angle = Math.floor((80 * ratio + 360)) % 360;
+    }
+    /*
+    Author : 윤찬규
+    Date : 2023-05-14
+    Description : 공과 벽돌의 충돌 함수입니다.
+    */
+    conflictLeftRight() {
+        this.angle = (540 - this.angle) % 360; 
+        console.log("ball conflict [LEFT RIGHT]");
+    }
+    conflictTopBottom() {
+        this.angle = 360 - this.angle;
+        console.log("ball conflict [TOP BOTTOM]");
     }
 }

@@ -59,6 +59,6 @@ export class Zombie {
     Description : 좀비가 맵의 왼쪽 끝에 도달했는지 확인하는 함수입니다. 
     */
     isEnd() {
-        return this.x <= 0;
+        return this.x <= 125;
     }
 }
