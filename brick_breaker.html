@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Sigmar&display=swap" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script type="text/javascript" src="start.js"></script>
+    <title>Brick Breaker</title>
+</head>
+<body>
+
+    <!-- Author: 조휘원
+    Date: 2023-05-13
+    Description: 게임 시작 화면 html -->
+    <div class="start-screen">
+
+        <img id="background-img" src="start_screen.jpg">
+        <img id="background-img2" src="start_screen.jpg">
+
+        <div id="start" class="btns">
+            <button id="start-button" class="button-style">Game Start</button>
+            <div class="level">
+                <p>Level</p>
+                <button id="level_1" class="button-style">초급</button>
+                <button id="level_2" class="button-style">중급</button>
+                <button id="level_3" class="button-style">고급</button>
+                <button id="back">뒤로가기</button>
+            </div>
+        </div>
+
+        <div id="set-screen" class="btns">
+            <button id="set-button" class="button-style">Setting</button>
+            <div class="set-container">
+
+
+                <!-- 환경설정 -->
+                <div id="set_BGM">
+                    <p>BGM</p>
+                    <br>
+                    <input type="button" value="ON" id="bgmBtn" onclick="bgm_setting()" /><br/>
+                </div>
+
+                <div id="set_ballColor">
+                    <p>공 색깔</p>
+                    <canvas id="settingCanvas" width="60" height="60"></canvas>
+                    <div id="ballColor">
+                        <span id="R">RED</span><input type="range" id="Red" value="0" min="0" max="255"/>
+                        <span id="G">GREEN</span><input type="range" id="Green" value="0" min="0" max="255"/>
+                        <span id="B">BLUE</span><input type="range" id="Blue" value="0" min="0" max="255"/>
+                    </div>
+                </div>
+
+
+                <div id="background"></div>
+            </div>
+        </div>
+
+        <div id="help" class="btns">
+            <button id="help-button" class="button-style">Help</button>
+            <div class="help-content">
+                <p>도움말 내용</p>
+                <button id="back">뒤로가기</button>
+            </div>
+        </div>
+        
+
+    </div>
+
+</body>
+</html>

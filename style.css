@@ -1,7 +1,178 @@
+
+/* 기본 초기화 */
 * {
-    margin: 0;
-    padding: 0;
+    margin: 0px;
+    padding: 0px;
 }
+
+body {
+    width: 100%;
+    margin: 0px auto;
+}
+
+li {
+    list-style: none;
+}
+
+a {
+    text-decoration: none;
+}
+
+img {
+    border: 0px;
+}
+
+/* 첫 메인화면 */
+#background-img {
+    width: 100%;
+    height: 100vh;
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+#background-img2 {
+    width: 100%;
+    height: 100vh;
+    background-position: center center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    filter: blur(5px);
+}
+
+.start-screen {
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+/* 버튼 스타일 */
+.button-style {
+    font-family: 'Sigmar', cursive;
+    font-size: 40px;
+    background-color: rgba(255, 188, 0, 0.6);
+    width: 300px;
+    height: 50px;
+    border-color: black;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* 버튼 컨테이너 */
+.btns {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+/* 시작 버튼 */
+#start-button {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -200%);
+    z-index: 1;
+    margin-bottom: 20px;
+}
+
+/* 설정 버튼 */
+#set-button {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1;
+    margin-bottom: 20px;
+}
+
+/* 도움말 버튼 */
+#help-button {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, 100%);
+    z-index: 1;
+}
+
+/* 레벨 버튼 */
+.level {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+.level p {
+    font-family: 'Sigmar', cursive;
+    font-size: 50px;
+    margin-bottom: 20px;
+    z-index: 1;
+}
+
+/* 레벨 1 버튼 */
+#level_1 {
+    font-family: 'Black Han Sans', sans-serif;
+    margin-bottom: 10px;
+}
+
+/* 레벨 2 버튼 */
+#level_2 {
+    font-family: 'Black Han Sans', sans-serif;
+    margin-bottom: 10px;
+}
+
+/* 레벨 3 버튼 */
+#level_3 {
+    font-family: 'Black Han Sans', sans-serif;
+    margin-bottom: 10px;
+}
+
+/* 환경설정 */
+.set-container {
+    display: none;
+}
+
+/* 도움말 */
+.help-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+.help-content p {
+    font-family: 'Black Han Sans', cursive;
+    font-size: 50px;
+    margin-bottom: 20px;
+    z-index: 1;
+}
+
+/* 뒤로가기 */
+#back {
+    margin-bottom: 10px;
+    background-color: whitesmoke;
+}
+
 
 #game-display {
     width: 100%;
