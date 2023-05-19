@@ -29,6 +29,7 @@ export class gameManager {
         this.spawnEntitesLinesPerWave = this.difficulty * this.curWave * 5;
         this.minimumSpawnEntitiesPerLine = this.difficulty;
         this.maximumSpawnEntitiesPerLine = Math.min(this.difficulty * 2, 5);
+        this.remainZombie = 0;
         this.spawnPos = [0, 0, 0, 0, 0];
 
         this.minimumPosOfLinesX = [1600, 1600, 1600, 1600, 1600];
@@ -43,7 +44,8 @@ export class gameManager {
 
         this.animation = null;
         this.upPressed = false;
-        this.downPressed = false; // 키가 눌렸는지  
+        this.downPressed = false; // 키가 눌렸는지
+        this.gameOverScreen = null;  
     }
 
     startGame() {
@@ -60,6 +62,7 @@ export class gameManager {
         this.generateZombie();
         if(this.ball.isLeft()) {
             window.cancelAnimationFrame(this.animation);
+            this.showGameOverScreen();
             // test call
             console.log("ball is out")
         }
@@ -160,6 +163,7 @@ export class gameManager {
                 for(let j = 0; j < 100; j++) {
                     if(this.zombies[i][j].hp <= 0) {
                         this.zombies[i][j] = new Zombie(1400, i * 101 + 120, 50, 80, 1, 10, 1);
+                        this.remainZombie += 1;
                         break;
                     }
                 }
@@ -197,20 +201,14 @@ export class gameManager {
     BallAndZombie() {
         const range_s = [80, 181, 282, 383, 484];
         const range_e = [160, 261, 362, 463, 564];
-        const ballPos = {
-            x: this.ball.x,
-            y: this.ball.y,
-            top: this.ball.y - this.ball.r,
-            right: this.ball.x + this.ball.r,
-            bottom: this.ball.y + this.ball.r,
-            left: this.ball.x - this.ball.r
-        };
+        let zombiePos;
 
         for(let i = 0; i < 5; i++) {
-            if(ballPos.bottom >= range_s[i] && ballPos.top <= range_e[i]) {
+            if(this.ball.y + this.ball.r >= range_s[i] && this.ball.y - this.ball.r <= range_e[i]) {
                 // 해당 줄의 좀비들과 충돌 검사
                 for(let j = 0; j < 100; j++) {
-                    const zombiePos = {
+                    if(this.zombies[i][j].hp <= 0) continue;
+                    zombiePos = {
                         x: this.zombies[i][j].x,
                         y: this.zombies[i][j].y,
                         top: this.zombies[i][j].y - this.zombies[i][j].height / 2,
@@ -218,61 +216,21 @@ export class gameManager {
                         bottom: this.zombies[i][j].y + this.zombies[i][j].height / 2,
                         left: this.zombies[i][j].x - this.zombies[i][j].width / 2
                     }
-                    const r2 = this.ball.r * this.ball.r;
-                    const dist2UL = (zombiePos.left - ballPos.x) ** 2 + (zombiePos.top - ballPos.y) ** 2;
-                    const dist2UR = (zombiePos.right - ballPos.x) ** 2 + (zombiePos.top - ballPos.y) ** 2;
-                    const dist2DL = (zombiePos.left - ballPos.x) ** 2 + (zombiePos.bottom - ballPos.y) ** 2;
-                    const dist2DR = (zombiePos.right - ballPos.x) ** 2 + (zombiePos.bottom - ballPos.y) ** 2;
-
-                    if(dist2UL <= r2) {
-                        if(ballPos.y - zombiePos.top > zombiePos.left - ballPos.x) {
-                            this.ball.conflictTopBottom();
-                        }
-                        else {
+                    if((zombiePos.top <= this.ball.y && this.ball.y <= zombiePos.bottom)) {
+                        if((this.ball.x < zombiePos.x && this.ball.x + this.ball.r >= zombiePos.left) ||
+                        (this.ball.x > zombiePos.x && this.ball.x - this.ball.r <= zombiePos.right)) {
                             this.ball.conflictLeftRight();
                         }
                     }
-                    else if(dist2UR <= r2) {
-                        if(ballPos.y - zombiePos.top > ballPos.x - zombiePos.right) {
-                            this.ball.conflictTopBottom();
-                        }
-                        else {
-                            this.ball.conflictLeftRight();
-                        }
-                    }
-                    else if(dist2DL <= r2) {
-                        if(zombiePos.bottom - ballPos.y > zombiePos.left - ballPos.x) {
-                            this.ball.conflictTopBottom();
-                        }
-                        else {
-                            this.ball.conflictLeftRight();
-                        }
-                    }
-                    else if(dist2DR <= r2) {
-                        if(zombiePos.bottom - ballPos.y > ballPos.x - zombiePos.right) {
-                            this.ball.conflictTopBottom();
-                        }
-                        else {
-                            this.ball.conflictLeftRight();
-                        }
-                    }
-                    else if((zombiePos.top <= ballPos.y && ballPos.y <= zombiePos.bottom)) {
-                        if((ballPos.x < zombiePos.x && ballPos.right >= zombiePos.left) ||
-                        (ballPos.x > zombiePos.x && ballPos.left <= zombiePos.right)) {
-                            this.ball.conflictLeftRight();
-                        }
-                    }
-                    else if((zombiePos.left <= ballPos.x && ballPos.x <= zombiePos.right)) {
-                        if((ballPos.y < zombiePos.y && ballPos.bottom >= zombiePos.top) ||
-                        (ballPos.y > zombiePos.y && ballPos.top <= zombiePos.bottom)) {
+                    else if((zombiePos.left <= this.ball.x && this.ball.x <= zombiePos.right)) {
+                        if((this.ball.y < zombiePos.y && this.ball.y + this.ball.r >= zombiePos.top) ||
+                        (this.ball.y > zombiePos.y && this.ball.y - this.ball.r <= zombiePos.bottom)) {
                             this.ball.conflictTopBottom();
                         }
                     }
                 }
             }
         }
-
-
     }
     /*
     Author : 윤찬규
@@ -318,4 +276,54 @@ export class gameManager {
         document.addEventListener("keyup", this.keyUpHandler.bind(this), false);
     }
     /*******************************************************************************************************/
+
+    /*
+    Author : 이건
+    Date : 2023-05-14
+    Description : 게임 실패시 게임 실패 화면을 출력하는 함수
+    */
+    showGameOverScreen() {
+        this.initGameOverScreen();
+        $("#game-display").append(this.gameOverScreen);
+        // 출력 애니메이션
+        $(this.gameOverScreen).hide().fadeIn(2000);
+    };
+
+    /*
+    Author : 이건
+    Date : 2023-05-14
+    Description : 게임 실패 화면을 초기화하는 함수
+    */
+    initGameOverScreen() {
+        this.gameOverScreen = document.createElement("div");
+        $(this.gameOverScreen).addClass("gameOverScreen");
+
+        let gameOverImage = document.createElement("img");
+        $(gameOverImage).attr("id", "gameOverImage");
+
+        let buttonDiv = document.createElement("div");
+        $(buttonDiv).attr("id", "buttonDiv");
+
+        let retry = document.createElement("img");
+        $(retry).attr("id", "retry-button");
+        $(retry).on("click", function () {
+            $("#game-display .gameOverScreen").remove();
+            // 게임 재실행
+            
+        });
+        $(retry).css("margin-right", "20px");
+
+        let exit = document.createElement("img");
+        $(exit).attr("id", "exit-button");
+        $(exit).on("click", function () {
+            $("#game-display .gameOverScreen").remove();
+            // 메인 화면
+             
+        });
+
+        $(this.gameOverScreen).append(gameOverImage);
+        $(this.gameOverScreen).append(buttonDiv);
+        $(buttonDiv).append(retry);
+        $(buttonDiv).append(exit);
+    }
 }

@@ -41,10 +41,14 @@ export class Ball {
             this.y + this.r >= 600) {
             this.angle = 360 - this.angle;
         } 
+        this.nextPos();
+        this.draw(ctx);
+    }
+
+    nextPos() {
         let radian = this.#d2r(this.angle);
         this.x += Math.cos(radian) * this.speed;
         this.y += Math.sin(radian) * this.speed; 
-        this.draw(ctx);
     }
 
     /*
@@ -70,7 +74,7 @@ export class Ball {
     닿으면 1 아니면 0을 리턴합니다. 벽의 기준은 해당 좌표값 왼쪽입니다.
     */
     isLeft() {
-        return this.x <= 0;
+        return this.x <= 125;
     }
 
     /*
