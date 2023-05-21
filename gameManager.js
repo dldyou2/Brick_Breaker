@@ -12,7 +12,7 @@ Description : 게임을 관리하는 함수입니다.
 export class gameManager {
     constructor(ctx, difficulty) {
         // test call
-        console.log("gameManager loaded");
+        console.log("difficulty[" + difficulty + "] gameManager loaded");
         this.ctx = ctx;
         
         this.difficulty = difficulty;
