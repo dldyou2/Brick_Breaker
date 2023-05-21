@@ -12,7 +12,7 @@ Description : 게임을 관리하는 함수입니다.
 export class gameManager {
     constructor(ctx, difficulty) {
         // test call
-        console.log("gameManager loaded");
+        console.log("difficulty[" + difficulty + "] gameManager loaded");
         this.ctx = ctx;
         
         this.difficulty = difficulty;
@@ -25,7 +25,7 @@ export class gameManager {
         this.stick = new Stick(220, 300, 20, 125, 20);
 
         this.gold = 0;
-
+        // zombie
         this.spawnEntitesLinesPerWave = this.difficulty * this.curWave * 5;
         this.minimumSpawnEntitiesPerLine = this.difficulty;
         this.maximumSpawnEntitiesPerLine = Math.min(this.difficulty * 2, 5);
@@ -40,6 +40,14 @@ export class gameManager {
             for(let j = 0; j < 100; j++) {
                 this.zombies[i].push(new Zombie(0, 0, 0, 0, 0, 0, 0));
             }
+        }
+        this.zombiePos;
+
+        // plant
+        this.plantPrice = {
+            peashooter:100,
+            snowpea:175,
+            wallnut:50
         }
 
         this.animation = null;
@@ -68,6 +76,7 @@ export class gameManager {
             // test call
             console.log("ball is out")
         }
+        this.updatePlantBar();
         this.move();
         this.checkBallConflict();
     }
@@ -92,7 +101,37 @@ export class gameManager {
             }
         }
     }
+    /*
+    Author : 윤찬규
+    Date : 2023-05-19
+    Description : 식물과 관련된 함수들입니다.
+    */
+    /*******************************************************************************************************/
+    initPlantBar() {
 
+    }
+    updatePlantBar() {
+        const plantsName = ["peashooter", "snowpea", "wallnut"];
+        const offSrc = "-dis";
+        const src = {
+            peashooter:"./images/In-Game/bar/peashooter-card",
+            snowpea:"./images/In-Game/bar/snowpea-card",
+            wallnut:"./images/In-Game/bar/wallnut-card"
+        }
+        const png = ".png";
+
+        for(let i in plantsName) {
+            let plantName = plantsName[i];
+            let selector = "#" + plantName + "-card";
+            if(this.gold >= this.plantPrice[plantName]) {
+                $(selector).attr("src", src[plantName] + png);
+            }
+            else {
+                $(selector).attr("src", src[plantName] + offSrc + png);
+            }
+        }
+    }
+    /*******************************************************************************************************/
     /*
     Author : 윤찬규
     Date : 2023-05-13
@@ -201,18 +240,37 @@ export class gameManager {
             console.log("ball conflict [Stick]");
         } 
     }
+    isConflictLeftRight() {
+        if((this.zombiePos.top <= this.ball.y && this.ball.y <= this.zombiePos.bottom)) {
+            if((this.ball.x < this.zombiePos.x && this.ball.x + this.ball.r >= this.zombiePos.left) ||
+            (this.ball.x > this.zombiePos.x && this.ball.x - this.ball.r <= this.zombiePos.right)) {
+                return 1;
+            }
+        }
+        return 0;
+    }
+
+    isConflictTopBottom() {
+        if((this.zombiePos.left <= this.ball.x && this.ball.x <= this.zombiePos.right)) {
+            if((this.ball.y < this.zombiePos.y && this.ball.y + this.ball.r >= this.zombiePos.top) ||
+            (this.ball.y > this.zombiePos.y && this.ball.y - this.ball.r <= this.zombiePos.bottom)) {
+                return 1;
+            }
+        }
+        return 0;
+    }
     // 공과 좀비의 충돌이 있었는가?
     BallAndZombie() {
         const range_s = [80, 181, 282, 383, 484];
         const range_e = [160, 261, 362, 463, 564];
-        let zombiePos;
 
+        
         for(let i = 0; i < 5; i++) {
             if(this.ball.y + this.ball.r >= range_s[i] && this.ball.y - this.ball.r <= range_e[i]) {
                 // 해당 줄의 좀비들과 충돌 검사
                 for(let j = 0; j < 100; j++) {
                     if(this.zombies[i][j].hp <= 0) continue;
-                    zombiePos = {
+                    this.zombiePos = {
                         x: this.zombies[i][j].x,
                         y: this.zombies[i][j].y,
                         top: this.zombies[i][j].y - this.zombies[i][j].height / 2,
@@ -220,18 +278,15 @@ export class gameManager {
                         bottom: this.zombies[i][j].y + this.zombies[i][j].height / 2,
                         left: this.zombies[i][j].x - this.zombies[i][j].width / 2
                     }
-                    if((zombiePos.top <= this.ball.y && this.ball.y <= zombiePos.bottom)) {
-                        if((this.ball.x < zombiePos.x && this.ball.x + this.ball.r >= zombiePos.left) ||
-                        (this.ball.x > zombiePos.x && this.ball.x - this.ball.r <= zombiePos.right)) {
-                            this.ball.conflictLeftRight();
-                        }
-                    }
-                    else if((zombiePos.left <= this.ball.x && this.ball.x <= zombiePos.right)) {
-                        if((this.ball.y < zombiePos.y && this.ball.y + this.ball.r >= zombiePos.top) ||
-                        (this.ball.y > zombiePos.y && this.ball.y - this.ball.r <= zombiePos.bottom)) {
-                            this.ball.conflictTopBottom();
-                        }
-                    }
+
+                    
+                    if(this.isConflictLeftRight()) 
+                        this.ball.conflictLeftRight();
+                    else if(this.isConflictTopBottom()) 
+                        this.ball.conflictTopBottom();
+                    
+                    while(this.isConflictLeftRight() || this.isConflictTopBottom()) 
+                        this.ball.nextPos();
                 }
             }
         }
@@ -270,6 +325,14 @@ export class gameManager {
             // console.log("Keyup: [DOWN]");
         }
     }
+    /* 
+    Author : 윤찬규
+    Date : 2023-05-19
+    Description : 마우스 이벤트(디버깅용)
+    */
+    mouseClicked(e) {
+        console.log("x: " + e.screenX + " y: " + e.screenY);
+    }
     /*
     Author : 윤찬규
     Date : 2023-05-12
@@ -278,6 +341,7 @@ export class gameManager {
     addEventListeners() {
         document.addEventListener("keydown", this.keyDownHandler.bind(this), false);
         document.addEventListener("keyup", this.keyUpHandler.bind(this), false);
+        document.addEventListener("click", this.mouseClicked, false);
     }
     /*******************************************************************************************************/
 
