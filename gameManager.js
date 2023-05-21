@@ -21,7 +21,7 @@ export class gameManager {
         this.spawnTime = 200;
         this.timer = 0;
         
-        this.ball = new Ball(300, 300, 15, 0, 15);
+        this.ball = new Ball(300, 300, 15, 0, 15, 1);
         this.stick = new Stick(220, 300, 20, 125, 20);
 
         this.gold = 0;
@@ -120,6 +120,7 @@ export class gameManager {
         }
         const png = ".png";
 
+        // 식물을 설치 할 수 있는지 없는지
         for(let i in plantsName) {
             let plantName = plantsName[i];
             let selector = "#" + plantName + "-card";
@@ -130,6 +131,8 @@ export class gameManager {
                 $(selector).attr("src", src[plantName] + offSrc + png);
             }
         }
+        // 골드 관리
+        $("#gold").text(this.gold.toString().padStart(5, '0'));
     }
     /*******************************************************************************************************/
     /*
@@ -205,7 +208,7 @@ export class gameManager {
             if(this.spawnPos[i] == 1) {
                 for(let j = 0; j < 100; j++) {
                     if(this.zombies[i][j].hp <= 0) {
-                        this.zombies[i][j] = new Zombie(1400, i * 101 + 120, 50, 80, 1, 10, 1);
+                        this.zombies[i][j] = new Zombie(1400, i * 101 + 120, 50, 80, 1, 1, 1);
                         this.remainZombie += 1;
                         break;
                     }
@@ -270,6 +273,7 @@ export class gameManager {
                 // 해당 줄의 좀비들과 충돌 검사
                 for(let j = 0; j < 100; j++) {
                     if(this.zombies[i][j].hp <= 0) continue;
+                    let isConflict = false;
                     this.zombiePos = {
                         x: this.zombies[i][j].x,
                         y: this.zombies[i][j].y,
@@ -281,12 +285,23 @@ export class gameManager {
 
                     
                     if(this.isConflictLeftRight()) 
-                        this.ball.conflictLeftRight();
+                        this.ball.conflictLeftRight(), isConflict = true;
                     else if(this.isConflictTopBottom()) 
-                        this.ball.conflictTopBottom();
+                        this.ball.conflictTopBottom(), isConflict = true;
                     
                     while(this.isConflictLeftRight() || this.isConflictTopBottom()) 
                         this.ball.nextPos();
+
+                    // 충돌 시 데미지
+                    if(isConflict) {
+                        this.zombies[i][j].hp -= this.ball.dmg;
+                        if(this.zombies[i][j].hp <= 0) {
+                            if(this.zombies[i][j] instanceof Zombie) {
+                                console.log("kill zombie");
+                                this.gold += 5;
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -309,6 +324,9 @@ export class gameManager {
 
             // test call
             // console.log("Keydown: [DOWN]");
+        }
+        else if(e.key == "g") {
+            this.gold += 15;
         }
     }
     keyUpHandler(e) {

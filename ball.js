@@ -6,12 +6,13 @@ Description: 공 클래스
 공의 위치 / 크기 / 이동 방향 / 속도 등을 저장 가능합니다.
 */
 export class Ball {
-    constructor(x, y, r, angle, speed) {
+    constructor(x, y, r, angle, speed, dmg) {
         this.x = x;
         this.y = y;
         this.r = r;
         this.angle = angle;
         this.speed = speed;
+        this.dmg = dmg;
         this.color = "red";
     }
 
