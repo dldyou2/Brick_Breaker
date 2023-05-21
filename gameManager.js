@@ -50,6 +50,8 @@ export class gameManager {
 
     startGame() {
         this.addEventListeners();
+        this.initGameOverScreen();
+        this.initGameClearScreen();
         this.animate();
 
         // test call
@@ -105,6 +107,8 @@ export class gameManager {
             if(this.curWave++ > this.maxWave)  {
                 // difficulty clear
                 // test call
+                window.cancelAnimationFrame(this.animation);
+                this.showGameClearScreen();
                 console.log("difficulty clear");
                 return 99;
             }
@@ -283,10 +287,10 @@ export class gameManager {
     Description : 게임 실패시 게임 실패 화면을 출력하는 함수
     */
     showGameOverScreen() {
-        this.initGameOverScreen();
         $("#game-display").append(this.gameOverScreen);
         // 출력 애니메이션
-        $(this.gameOverScreen).hide().fadeIn(2000);
+        $(this.gameOverScreen).animate({top : "180px", opacity : "0.5"}, 2000);
+        $(this.gameOverScreen).animate({top : "150px", opacity : "1.0"}, 400);
     };
 
     /*
@@ -309,9 +313,8 @@ export class gameManager {
         $(retry).on("click", function () {
             $("#game-display .gameOverScreen").remove();
             // 게임 재실행
-            
+            window.location.reload();
         });
-        $(retry).css("margin-right", "20px");
 
         let exit = document.createElement("img");
         $(exit).attr("id", "exit-button");
@@ -324,6 +327,54 @@ export class gameManager {
         $(this.gameOverScreen).append(gameOverImage);
         $(this.gameOverScreen).append(buttonDiv);
         $(buttonDiv).append(retry);
+        $(buttonDiv).append(exit);
+    }
+
+    /*
+    Author : 이건
+    Date : 2023-05-20
+    Description : 게임 클리어시 게임 클리어 화면을 출력하는 함수
+    */
+    showGameClearScreen() {
+        $("#game-display").append(this.gameClearScreen);
+        // 출력 애니메이션
+        $(this.gameClearScreen).hide().fadeIn(2000);
+    };
+
+    /*
+    Author : 이건
+    Date : 2023-05-20
+    Description : 게임 클리어 화면을 초기화하는 함수
+    */
+    initGameClearScreen() {
+        this.gameClearScreen = document.createElement("div");
+        $(this.gameClearScreen).addClass("gameClearScreen");
+
+        let gameClearImage = document.createElement("img");
+        $(gameClearImage).attr("id", "gameClearImage");
+
+        let buttonDiv = document.createElement("div");
+        $(buttonDiv).attr("id", "buttonDiv");
+
+        let next = document.createElement("img");
+        $(next).attr("id", "next-button");
+        $(next).on("click", function () {
+            $("#game-display .gameClearScreen").remove();
+            // 다음 스테이지 진행
+
+        });
+
+        let exit = document.createElement("img");
+        $(exit).attr("id", "exit-button");
+        $(exit).on("click", function () {
+            $("#game-display .gameClearScreen").remove();
+            // 메인 화면
+             
+        });
+
+        $(this.gameClearScreen).append(gameClearImage);
+        $(this.gameClearScreen).append(buttonDiv);
+        $(buttonDiv).append(next);
         $(buttonDiv).append(exit);
     }
 }
