@@ -34,6 +34,27 @@
     background-repeat: no-repeat;
 }
 
+#empty-class {
+    position: relative;
+    width: 100%;
+    height: 84%;
+}
+
+.plants {
+    margin: 5px;
+    width: 110px;
+    height: 150px;
+}
+
+#gold {
+    position: relative;
+    z-index: 1;
+    font-size: 25px;
+    font-weight: bold;
+    top: 70px;
+    left: 26px;
+}
+
 .gameOverScreen {
     position: absolute;
     top: 0;
@@ -41,25 +62,55 @@
     width: 100%;
     height: 100%;
     text-align: center;
+    background : none;
+    opacity: 0.0;
+}
+
+.gameClearScreen {
+    position: absolute;
+    top: 0;
+    left : 0;
+    width: 100%;
+    height: 100%;
+    text-align: center;
     padding-top: 150px;
-    background: none;
+    background : none;
 }
 
 #gameOverImage {
-    content: url("./images/In-Game/game_over.png");
+    content: url("./images/In-Game/menu/gameover.png");
+
+}
+
+#gameClearImage {
+    content: url("./images/In-Game/menu/stage_clear.png");
 }
 
 #buttonDiv {
     width: 100%;
     height: 300px;
     text-align: center;
-    padding-top: 70px;
+    padding-top: 40px;
 }
 
 #retry-button {
-    content: url("./images/In-Game/retry.png");
+    content: url("./images/In-Game/menu/restart.png");
+    margin-right: 30px;
+}
+
+#retry-button:hover {
+    content: url("./images/In-Game/menu/restart-hover.png");
+}
+
+#next-button {
+    content: url("./images/In-Game/menu/next.png");
+    margin-right: 30px;
 }
 
 #exit-button {
-    content: url("./images/In-Game/exit.png");
+    content: url("./images/In-Game/menu/mainmenu.png");
+}
+
+#exit-button:hover {
+    content: url("./images/In-Game/menu/mainmenu-hover.png");
 }

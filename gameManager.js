@@ -12,7 +12,7 @@ Description : 게임을 관리하는 함수입니다.
 export class gameManager {
     constructor(ctx, difficulty) {
         // test call
-        console.log("gameManager loaded");
+        console.log("difficulty[" + difficulty + "] gameManager loaded");
         this.ctx = ctx;
         
         this.difficulty = difficulty;
@@ -21,11 +21,11 @@ export class gameManager {
         this.spawnTime = 200;
         this.timer = 0;
         
-        this.ball = new Ball(300, 300, 15, 0, 15);
+        this.ball = new Ball(300, 300, 15, 0, 15, 1);
         this.stick = new Stick(220, 300, 20, 125, 20);
 
         this.gold = 0;
-
+        // zombie
         this.spawnEntitesLinesPerWave = this.difficulty * this.curWave * 5;
         this.minimumSpawnEntitiesPerLine = this.difficulty;
         this.maximumSpawnEntitiesPerLine = Math.min(this.difficulty * 2, 5);
@@ -41,6 +41,14 @@ export class gameManager {
                 this.zombies[i].push(new Zombie(0, 0, 0, 0, 0, 0, 0));
             }
         }
+        this.zombiePos;
+
+        // plant
+        this.plantPrice = {
+            peashooter:100,
+            snowpea:175,
+            wallnut:50
+        }
 
         this.animation = null;
         this.upPressed = false;
@@ -50,6 +58,8 @@ export class gameManager {
 
     startGame() {
         this.addEventListeners();
+        this.initGameOverScreen();
+        this.initGameClearScreen();
         this.animate();
 
         // test call
@@ -66,6 +76,7 @@ export class gameManager {
             // test call
             console.log("ball is out")
         }
+        this.updatePlantBar();
         this.move();
         this.checkBallConflict();
     }
@@ -90,7 +101,40 @@ export class gameManager {
             }
         }
     }
+    /*
+    Author : 윤찬규
+    Date : 2023-05-19
+    Description : 식물과 관련된 함수들입니다.
+    */
+    /*******************************************************************************************************/
+    initPlantBar() {
 
+    }
+    updatePlantBar() {
+        const plantsName = ["peashooter", "snowpea", "wallnut"];
+        const offSrc = "-dis";
+        const src = {
+            peashooter:"./images/In-Game/bar/peashooter-card",
+            snowpea:"./images/In-Game/bar/snowpea-card",
+            wallnut:"./images/In-Game/bar/wallnut-card"
+        }
+        const png = ".png";
+
+        // 식물을 설치 할 수 있는지 없는지
+        for(let i in plantsName) {
+            let plantName = plantsName[i];
+            let selector = "#" + plantName + "-card";
+            if(this.gold >= this.plantPrice[plantName]) {
+                $(selector).attr("src", src[plantName] + png);
+            }
+            else {
+                $(selector).attr("src", src[plantName] + offSrc + png);
+            }
+        }
+        // 골드 관리
+        $("#gold").text(this.gold.toString().padStart(5, '0'));
+    }
+    /*******************************************************************************************************/
     /*
     Author : 윤찬규
     Date : 2023-05-13
@@ -105,6 +149,8 @@ export class gameManager {
             if(this.curWave++ > this.maxWave)  {
                 // difficulty clear
                 // test call
+                window.cancelAnimationFrame(this.animation);
+                this.showGameClearScreen();
                 console.log("difficulty clear");
                 return 99;
             }
@@ -162,7 +208,7 @@ export class gameManager {
             if(this.spawnPos[i] == 1) {
                 for(let j = 0; j < 100; j++) {
                     if(this.zombies[i][j].hp <= 0) {
-                        this.zombies[i][j] = new Zombie(1400, i * 101 + 120, 50, 80, 1, 10, 1);
+                        this.zombies[i][j] = new Zombie(1400, i * 101 + 120, 50, 80, 1, 1, 1);
                         this.remainZombie += 1;
                         break;
                     }
@@ -197,18 +243,38 @@ export class gameManager {
             console.log("ball conflict [Stick]");
         } 
     }
+    isConflictLeftRight() {
+        if((this.zombiePos.top <= this.ball.y && this.ball.y <= this.zombiePos.bottom)) {
+            if((this.ball.x < this.zombiePos.x && this.ball.x + this.ball.r >= this.zombiePos.left) ||
+            (this.ball.x > this.zombiePos.x && this.ball.x - this.ball.r <= this.zombiePos.right)) {
+                return 1;
+            }
+        }
+        return 0;
+    }
+
+    isConflictTopBottom() {
+        if((this.zombiePos.left <= this.ball.x && this.ball.x <= this.zombiePos.right)) {
+            if((this.ball.y < this.zombiePos.y && this.ball.y + this.ball.r >= this.zombiePos.top) ||
+            (this.ball.y > this.zombiePos.y && this.ball.y - this.ball.r <= this.zombiePos.bottom)) {
+                return 1;
+            }
+        }
+        return 0;
+    }
     // 공과 좀비의 충돌이 있었는가?
     BallAndZombie() {
         const range_s = [80, 181, 282, 383, 484];
         const range_e = [160, 261, 362, 463, 564];
-        let zombiePos;
 
+        
         for(let i = 0; i < 5; i++) {
             if(this.ball.y + this.ball.r >= range_s[i] && this.ball.y - this.ball.r <= range_e[i]) {
                 // 해당 줄의 좀비들과 충돌 검사
                 for(let j = 0; j < 100; j++) {
                     if(this.zombies[i][j].hp <= 0) continue;
-                    zombiePos = {
+                    let isConflict = false;
+                    this.zombiePos = {
                         x: this.zombies[i][j].x,
                         y: this.zombies[i][j].y,
                         top: this.zombies[i][j].y - this.zombies[i][j].height / 2,
@@ -216,16 +282,24 @@ export class gameManager {
                         bottom: this.zombies[i][j].y + this.zombies[i][j].height / 2,
                         left: this.zombies[i][j].x - this.zombies[i][j].width / 2
                     }
-                    if((zombiePos.top <= this.ball.y && this.ball.y <= zombiePos.bottom)) {
-                        if((this.ball.x < zombiePos.x && this.ball.x + this.ball.r >= zombiePos.left) ||
-                        (this.ball.x > zombiePos.x && this.ball.x - this.ball.r <= zombiePos.right)) {
-                            this.ball.conflictLeftRight();
-                        }
-                    }
-                    else if((zombiePos.left <= this.ball.x && this.ball.x <= zombiePos.right)) {
-                        if((this.ball.y < zombiePos.y && this.ball.y + this.ball.r >= zombiePos.top) ||
-                        (this.ball.y > zombiePos.y && this.ball.y - this.ball.r <= zombiePos.bottom)) {
-                            this.ball.conflictTopBottom();
+
+                    
+                    if(this.isConflictLeftRight()) 
+                        this.ball.conflictLeftRight(), isConflict = true;
+                    else if(this.isConflictTopBottom()) 
+                        this.ball.conflictTopBottom(), isConflict = true;
+                    
+                    while(this.isConflictLeftRight() || this.isConflictTopBottom()) 
+                        this.ball.nextPos();
+
+                    // 충돌 시 데미지
+                    if(isConflict) {
+                        this.zombies[i][j].hp -= this.ball.dmg;
+                        if(this.zombies[i][j].hp <= 0) {
+                            if(this.zombies[i][j] instanceof Zombie) {
+                                console.log("kill zombie");
+                                this.gold += 5;
+                            }
                         }
                     }
                 }
@@ -251,6 +325,9 @@ export class gameManager {
             // test call
             // console.log("Keydown: [DOWN]");
         }
+        else if(e.key == "g") {
+            this.gold += 15;
+        }
     }
     keyUpHandler(e) {
         if(e.key === "Up" || e.key === "ArrowUp") {
@@ -266,6 +343,14 @@ export class gameManager {
             // console.log("Keyup: [DOWN]");
         }
     }
+    /* 
+    Author : 윤찬규
+    Date : 2023-05-19
+    Description : 마우스 이벤트(디버깅용)
+    */
+    mouseClicked(e) {
+        console.log("x: " + e.screenX + " y: " + e.screenY);
+    }
     /*
     Author : 윤찬규
     Date : 2023-05-12
@@ -274,6 +359,7 @@ export class gameManager {
     addEventListeners() {
         document.addEventListener("keydown", this.keyDownHandler.bind(this), false);
         document.addEventListener("keyup", this.keyUpHandler.bind(this), false);
+        document.addEventListener("click", this.mouseClicked, false);
     }
     /*******************************************************************************************************/
 
@@ -283,10 +369,10 @@ export class gameManager {
     Description : 게임 실패시 게임 실패 화면을 출력하는 함수
     */
     showGameOverScreen() {
-        this.initGameOverScreen();
         $("#game-display").append(this.gameOverScreen);
         // 출력 애니메이션
-        $(this.gameOverScreen).hide().fadeIn(2000);
+        $(this.gameOverScreen).animate({top : "180px", opacity : "0.5"}, 2000);
+        $(this.gameOverScreen).animate({top : "150px", opacity : "1.0"}, 400);
     };
 
     /*
@@ -309,9 +395,8 @@ export class gameManager {
         $(retry).on("click", function () {
             $("#game-display .gameOverScreen").remove();
             // 게임 재실행
-            
+            window.location.reload();
         });
-        $(retry).css("margin-right", "20px");
 
         let exit = document.createElement("img");
         $(exit).attr("id", "exit-button");
@@ -324,6 +409,54 @@ export class gameManager {
         $(this.gameOverScreen).append(gameOverImage);
         $(this.gameOverScreen).append(buttonDiv);
         $(buttonDiv).append(retry);
+        $(buttonDiv).append(exit);
+    }
+
+    /*
+    Author : 이건
+    Date : 2023-05-20
+    Description : 게임 클리어시 게임 클리어 화면을 출력하는 함수
+    */
+    showGameClearScreen() {
+        $("#game-display").append(this.gameClearScreen);
+        // 출력 애니메이션
+        $(this.gameClearScreen).hide().fadeIn(2000);
+    };
+
+    /*
+    Author : 이건
+    Date : 2023-05-20
+    Description : 게임 클리어 화면을 초기화하는 함수
+    */
+    initGameClearScreen() {
+        this.gameClearScreen = document.createElement("div");
+        $(this.gameClearScreen).addClass("gameClearScreen");
+
+        let gameClearImage = document.createElement("img");
+        $(gameClearImage).attr("id", "gameClearImage");
+
+        let buttonDiv = document.createElement("div");
+        $(buttonDiv).attr("id", "buttonDiv");
+
+        let next = document.createElement("img");
+        $(next).attr("id", "next-button");
+        $(next).on("click", function () {
+            $("#game-display .gameClearScreen").remove();
+            // 다음 스테이지 진행
+
+        });
+
+        let exit = document.createElement("img");
+        $(exit).attr("id", "exit-button");
+        $(exit).on("click", function () {
+            $("#game-display .gameClearScreen").remove();
+            // 메인 화면
+             
+        });
+
+        $(this.gameClearScreen).append(gameClearImage);
+        $(this.gameClearScreen).append(buttonDiv);
+        $(buttonDiv).append(next);
         $(buttonDiv).append(exit);
     }
 }
