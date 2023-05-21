@@ -66,7 +66,6 @@ export class Ball {
         ctx.fill();
         ctx.closePath();
     }
-
     /*
     Author : 윤찬규
     Date : 2023-05-12

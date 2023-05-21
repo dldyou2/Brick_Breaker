@@ -1,6 +1,6 @@
 import { Ball } from "./ball.js";
 import { Stick } from "./stick.js";
-import { Zombie } from "./zombie.js";
+import { stdZombie, Zombie, ConeheadZombie, BucketheadZombie } from "./zombie.js";
 /*
 Author : 윤찬규
 Date : 2023-05-13
@@ -38,7 +38,7 @@ export class gameManager {
         for(let i = 0; i < 5; i++) {
             this.zombies[i] = new Array();
             for(let j = 0; j < 100; j++) {
-                this.zombies[i].push(new Zombie(0, 0, 0, 0, 0, 0, 0));
+                this.zombies[i].push(new stdZombie(0, 0, 0, 0, 0, 0, 0));
             }
         }
         this.zombiePos;
@@ -93,6 +93,7 @@ export class gameManager {
             for(let j = 0; j < 100; j++) {
                 if(this.zombies[i][j].hp > 0) {
                     this.zombies[i][j].move(this.ctx);
+                    this.zombies[i][j].drawHP(this.ctx);
                     if(this.zombies[i][j].x < this.minimumPosOfLinesX[i]) {
                         this.minimumPosOfLinesX[i] = this.zombies[i][j].x;
                         this.minimumPosOfLinesIdx[i] = j;
@@ -196,6 +197,19 @@ export class gameManager {
         console.log(this.spawnPos);
     }
 
+    randZombie(i) {
+        let r = this.randRange(1, 100);
+        if(r < 70) {
+            return new Zombie(1400, i * 101 + 120, 50, 80, 1, 1, 1);
+        }
+        else if(r < 90) {
+            return new ConeheadZombie(1400, i * 101 + 120, 50, 80, 0.75, 5, 1);
+        }
+        else {
+            return new BucketheadZombie(1400, i * 101 + 120, 50, 80, 0.5, 10, 1);
+        }
+    }
+
     spawnZombie() {
         /*
         line 0: 80-160
@@ -206,9 +220,10 @@ export class gameManager {
         */
         for(let i = 0; i < 5; i++) {
             if(this.spawnPos[i] == 1) {
+                let zombie = this.randZombie(i);
                 for(let j = 0; j < 100; j++) {
                     if(this.zombies[i][j].hp <= 0) {
-                        this.zombies[i][j] = new Zombie(1400, i * 101 + 120, 50, 80, 1, 1, 1);
+                        this.zombies[i][j] = zombie;
                         this.remainZombie += 1;
                         break;
                     }
@@ -271,9 +286,9 @@ export class gameManager {
         for(let i = 0; i < 5; i++) {
             if(this.ball.y + this.ball.r >= range_s[i] && this.ball.y - this.ball.r <= range_e[i]) {
                 // 해당 줄의 좀비들과 충돌 검사
+                let isConflict = false;
                 for(let j = 0; j < 100; j++) {
                     if(this.zombies[i][j].hp <= 0) continue;
-                    let isConflict = false;
                     this.zombiePos = {
                         x: this.zombies[i][j].x,
                         y: this.zombies[i][j].y,
@@ -295,13 +310,24 @@ export class gameManager {
                     // 충돌 시 데미지
                     if(isConflict) {
                         this.zombies[i][j].hp -= this.ball.dmg;
+                        this.zombies[i][j].timer_HP = 100; // 충돌 시 체력 바
                         if(this.zombies[i][j].hp <= 0) {
+                            this.remainZombie--;
                             if(this.zombies[i][j] instanceof Zombie) {
-                                console.log("kill zombie");
-                                this.gold += 5;
+                                this.gold += 15;
+                            }
+                            else if(this.zombies[i][j] instanceof ConeheadZombie) {
+                                this.gold += 35;
+                            }
+                            else if(this.zombies[i][j] instanceof BucketheadZombie) {
+                                this.gold += 50;
                             }
                         }
+                        break;
                     }
+                }
+                if(isConflict) {
+                    break;
                 }
             }
         }
