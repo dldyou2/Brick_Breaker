@@ -51,25 +51,55 @@
     width: 100%;
     height: 100%;
     text-align: center;
+    background : none;
+    opacity: 0.0;
+}
+
+.gameClearScreen {
+    position: absolute;
+    top: 0;
+    left : 0;
+    width: 100%;
+    height: 100%;
+    text-align: center;
     padding-top: 150px;
-    background: none;
+    background : none;
 }
 
 #gameOverImage {
-    content: url("./images/In-Game/game_over.png");
+    content: url("./images/In-Game/menu/gameover.png");
+
+}
+
+#gameClearImage {
+    content: url("./images/In-Game/menu/stage_clear.png");
 }
 
 #buttonDiv {
     width: 100%;
     height: 300px;
     text-align: center;
-    padding-top: 70px;
+    padding-top: 40px;
 }
 
 #retry-button {
-    content: url("./images/In-Game/retry.png");
+    content: url("./images/In-Game/menu/restart.png");
+    margin-right: 30px;
+}
+
+#retry-button:hover {
+    content: url("./images/In-Game/menu/restart-hover.png");
+}
+
+#next-button {
+    content: url("./images/In-Game/menu/next.png");
+    margin-right: 30px;
 }
 
 #exit-button {
-    content: url("./images/In-Game/exit.png");
+    content: url("./images/In-Game/menu/mainmenu.png");
+}
+
+#exit-button:hover {
+    content: url("./images/In-Game/menu/mainmenu-hover.png");
 }
