@@ -25,7 +25,7 @@ export class gameManager {
         this.stick = new Stick(220, 300, 20, 125, 20);
 
         this.gold = 0;
-
+        // zombie
         this.spawnEntitesLinesPerWave = this.difficulty * this.curWave * 5;
         this.minimumSpawnEntitiesPerLine = this.difficulty;
         this.maximumSpawnEntitiesPerLine = Math.min(this.difficulty * 2, 5);
@@ -42,6 +42,13 @@ export class gameManager {
             }
         }
         this.zombiePos;
+
+        // plant
+        this.plantPrice = {
+            peashooter:100,
+            snowpea:175,
+            wallnut:50
+        }
 
         this.animation = null;
         this.upPressed = false;
@@ -67,6 +74,7 @@ export class gameManager {
             // test call
             console.log("ball is out")
         }
+        this.updatePlantBar();
         this.move();
         this.checkBallConflict();
     }
@@ -98,10 +106,28 @@ export class gameManager {
     */
     /*******************************************************************************************************/
     initPlantBar() {
-        
+
     }
     updatePlantBar() {
+        const plantsName = ["peashooter", "snowpea", "wallnut"];
+        const offSrc = "-dis";
+        const src = {
+            peashooter:"./images/In-Game/bar/peashooter-card",
+            snowpea:"./images/In-Game/bar/snowpea-card",
+            wallnut:"./images/In-Game/bar/wallnut-card"
+        }
+        const png = ".png";
 
+        for(let i in plantsName) {
+            let plantName = plantsName[i];
+            let selector = "#" + plantName + "-card";
+            if(this.gold >= this.plantPrice[plantName]) {
+                $(selector).attr("src", src[plantName] + png);
+            }
+            else {
+                $(selector).attr("src", src[plantName] + offSrc + png);
+            }
+        }
     }
     /*******************************************************************************************************/
     /*

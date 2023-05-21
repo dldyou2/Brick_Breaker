@@ -41,7 +41,9 @@
 }
 
 .plants {
-    margin: 0 auto;
+    margin: 5px;
+    width: 110px;
+    height: 150px;
 }
 
 .gameOverScreen {
