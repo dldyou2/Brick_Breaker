@@ -46,6 +46,15 @@
     height: 150px;
 }
 
+#gold {
+    position: relative;
+    z-index: 1;
+    font-size: 25px;
+    font-weight: bold;
+    top: 70px;
+    left: 26px;
+}
+
 .gameOverScreen {
     position: absolute;
     top: 0;
