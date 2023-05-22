@@ -1,5 +1,5 @@
 import { Ball } from "./ball.js";
-import { Plant } from "./plant.js";
+import { Peashooter, Plant, Snowpea, Wallnut } from "./plant.js";
 import { Stick } from "./stick.js";
 import { stdZombie, Zombie, ConeheadZombie, BucketheadZombie } from "./zombie.js";
 /*
@@ -59,6 +59,7 @@ export class gameManager {
         }
         this.buyStatus = 0;
         this.buyEvent = null;
+        this.addPlantX = 0, this.addPlantY = 0;
 
         this.animation = null;
         this.upPressed = false;
@@ -112,6 +113,13 @@ export class gameManager {
                 }
             }
         }
+        for(let i = 0; i < 5; i++) {
+            for(let j = 0; j < 9; j++) {
+                if(this.plants[i][j].hp > 0) {
+                    this.plants[i][j].draw(this.ctx);
+                }
+            }
+        }
     }
     draw() {
         this.ctx.clearRect(0, 0, 1400, 600);
@@ -121,6 +129,13 @@ export class gameManager {
             for (let j = 0; j < 100; j++) {
                 if(this.zombies[i][j].hp > 0) {
                     this.zombies[i][j].draw(this.ctx);
+                }
+            }
+        }
+        for(let i = 0; i < 5; i++) {
+            for(let j = 0; j < 9; j++) {
+                if(this.plants[i][j].hp > 0) {
+                    this.plants[i][j].draw(this.ctx);
                 }
             }
         }
@@ -167,6 +182,8 @@ export class gameManager {
         if(x >= 250 && x <= 1000 && y >= 75 && y <= 575) {
             let tx = Math.floor((x - 251) / 83);
             let ty = Math.floor((y - 76) / 100);
+            this.addPlantX = tx;
+            this.addPlantY = ty;
 
             this.ctx.drawImage(img, tx * 83 + 291.5 - img.width / 2, ty * 100 + 107.5 - img.height / 2);
         }
@@ -444,10 +461,21 @@ export class gameManager {
     Description : 마우스 이벤트
     */
     mouseClicked(e) {
+        const plantsName = ["peashooter", "snowpea", "wallnut"];
         let x = e.pageX;
         let y = e.pageY;
         console.log("x: " + x + " y: " + y);
         if(this.buyStatus != 0 && x >= 250 && x <= 1000 && y >= 75 && y <= 575) {
+            if(this.plants[this.addPlantY][this.addPlantX].hp > 0) return;
+            if(this.buyStatus == plantsName[0]) {
+                this.plants[this.addPlantY][this.addPlantX] = new Peashooter(this.addPlantX * 83 + 291.5, this.addPlantY * 100 + 107.5, 5, 0, 1);
+            }
+            else if(this.buyStatus == plantsName[1]) {
+                this.plants[this.addPlantY][this.addPlantX] = new Snowpea(this.addPlantX * 83 + 291.5, this.addPlantY * 100 + 107.5, 10, 0, 0.5);
+            }
+            else if(this.buyStatus == plantsName[2]) {
+                this.plants[this.addPlantY][this.addPlantX] = new Wallnut(this.addPlantX * 83 + 291.5, this.addPlantY * 100 + 107.5, 5, 0, 1);
+            }
             this.buyStatus = 0;
             document.removeEventListener("mousemove", this.buyEvent);
             this.animate();
