@@ -94,10 +94,12 @@ export class Ball {
     */
     conflictLeftRight() {
         this.angle = (540 - this.angle) % 360; 
-        console.log("ball conflict [LEFT RIGHT]");
+        // test call
+        // console.log("ball conflict [LEFT RIGHT]");
     }
     conflictTopBottom() {
         this.angle = 360 - this.angle;
-        console.log("ball conflict [TOP BOTTOM]");
+        // test call
+        // console.log("ball conflict [TOP BOTTOM]");
     }
 }
