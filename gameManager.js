@@ -462,10 +462,11 @@ export class gameManager {
     */
     mouseClicked(e) {
         const plantsName = ["peashooter", "snowpea", "wallnut"];
-        let x = e.pageX;
-        let y = e.pageY;
+        let x = e.pageX - $("#myCanvas").offset().left;
+        let y = e.pageY - $("#myCanvas").offset().top;
         console.log("x: " + x + " y: " + y);
         if(this.buyStatus != 0 && x >= 250 && x <= 1000 && y >= 75 && y <= 575) {
+            console.log(this.addPlantX + " " + this.addPlantY);
             if(this.plants[this.addPlantY][this.addPlantX].hp > 0) return;
             if(this.buyStatus == plantsName[0]) {
                 this.plants[this.addPlantY][this.addPlantX] = new Peashooter(this.addPlantX * 83 + 291.5, this.addPlantY * 100 + 107.5, 5, 0, 1);
@@ -483,8 +484,8 @@ export class gameManager {
         }
     }
     mouseMoved(e) {
-        let x = e.pageX;
-        let y = e.pageY;
+        let x = e.pageX - $("#myCanvas").offset().left;
+        let y = e.pageY - $("#myCanvas").offset().top;
 
         this.addingPlant(x, y);
     }
