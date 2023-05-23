@@ -12,6 +12,12 @@ export class Plant {
         this.hp = hp;
         this.dmg = dmg;
         this.atk_speed = atk_speed;
+
+        this.img = new Array();
+        for (let i = 0; i < 7; i++) {
+            this.img.push(new Image());
+        }
+        this.frame = 0;
     }
 
     attack() {
@@ -25,10 +31,65 @@ export class Plant {
     isAlive() {
         return this.hp > 0;
     }
+
+    nextFrame() {
+        this.frame = (this.frame + 1) % 7;
+    }
 }
 
 export class Peashooter extends Plant {
     constructor(x, y, hp, dmg, atk_speed) {
         super(x, y, hp, dmg, atk_speed);
+        this.#setImage();
+    }
+
+    #setImage() {
+        for (let i = 0; i < 7; i++) {
+            this.img[i].src = "./images/Plants/peashooter/peashooter_" + i + ".png";
+        }
+    }
+
+    draw(ctx) {
+        ctx.beginPath();
+        ctx.drawImage(this.img[this.frame], this.x - this.img[this.frame].width / 2, this.y - this.img[this.frame].height / 2);
+        ctx.closePath();
+    }
+}
+
+export class Snowpea extends Plant {
+    constructor(x, y, hp, dmg, atk_speed) {
+        super(x, y, hp, dmg, atk_speed);
+        this.#setImage();
+    }
+
+    #setImage() {
+        for (let i = 0; i < 7; i++) {
+            this.img[i].src = "./images/Plants/snowpea/snowpea_" + i + ".png";
+        }
+    }
+
+    draw(ctx) {
+        ctx.beginPath();
+        ctx.drawImage(this.img[this.frame], this.x - this.img[this.frame].width / 2, this.y - this.img[this.frame].height / 2);
+        ctx.closePath();
+    }
+}
+
+export class Wallnut extends Plant {
+    constructor(x, y, hp, dmg, atk_speed) {
+        super(x, y, hp, dmg, atk_speed);
+        this.#setImage();
+    }
+
+    #setImage() {
+        for (let i = 0; i < 7; i++) {
+            this.img[i].src = "./images/Plants/wallnut/wallnut_" + i + ".png";
+        }
+    }
+
+    draw(ctx) {
+        ctx.beginPath();
+        ctx.drawImage(this.img[this.frame], this.x - this.img[this.frame].width / 2, this.y - this.img[this.frame].height / 2);
+        ctx.closePath();
     }
 }
