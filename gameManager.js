@@ -17,9 +17,9 @@ export class gameManager {
         this.ctx = ctx;
         
         this.difficulty = difficulty;
-        this.maxWave = 1;
+        this.maxWave = 3;
         this.curWave = 1;
-        this.spawnTime = 150 - 50 * difficulty;
+        this.spawnTime = 350 - 50 * difficulty;
         this.timer = 0;
         
         this.ball = new Ball(300, 300, 15, 0, 10, 1);
@@ -27,7 +27,7 @@ export class gameManager {
 
         this.gold = 0;
         // zombie
-        this.spawnEntitesLinesPerWave = this.difficulty * this.curWave * 3;
+        this.spawnEntitesLinesPerWave = this.difficulty * this.curWave;
         this.minimumSpawnEntitiesPerLine = this.difficulty;
         this.maximumSpawnEntitiesPerLine = Math.min(this.difficulty * 2, 5);
         this.remainZombie = 0;
@@ -75,7 +75,7 @@ export class gameManager {
         this.difficulty = difficulty;
         this.maxWave = 3;
         this.curWave = 1;
-        this.spawnTime = 150 - 50 * difficulty;
+        this.spawnTime = 350 - 50 * difficulty;
         this.timer = 0;
         
         this.ball = new Ball(300, 300, 15, 0, 10, 1);
@@ -83,7 +83,7 @@ export class gameManager {
 
         this.gold = 0;
         // zombie
-        this.spawnEntitesLinesPerWave = this.difficulty * this.curWave * 3;
+        this.spawnEntitesLinesPerWave = this.difficulty * this.curWave;
         this.minimumSpawnEntitiesPerLine = this.difficulty;
         this.maximumSpawnEntitiesPerLine = Math.min(this.difficulty * 2, 5);
         this.remainZombie = 0;
@@ -143,13 +143,16 @@ export class gameManager {
         this.animation = window.requestAnimationFrame(this.animate.bind(this));
         this.generateZombie();
         if (this.ball.isLeft()) {
-            window.cancelAnimationFrame(this.animation);
-            this.showGameOverScreen();
             // test call
             console.log("ball is out")
+            this.ball.respawn();
         }
         this.updatePlantBar();
-        this.move();
+        let gameEnd = this.move();
+        if(gameEnd) {
+            window.cancelAnimationFrame(this.animation);
+            this.showGameOverScreen();
+        }
         this.checkBallConflict();
         
         if(++this.frame == 10) {
@@ -187,6 +190,9 @@ export class gameManager {
                     if (this.zombies[i][j].x < this.minimumPosOfLinesX[i]) {
                         this.minimumPosOfLinesX[i] = this.zombies[i][j].x;
                         this.minimumPosOfLinesIdx[i] = j;
+                        if(this.zombies[i][j].isEnd()) {
+                            return 1;
+                        }
                     }
                 }
             }
@@ -198,6 +204,7 @@ export class gameManager {
                 }
             }
         }
+        return 0;
     }
     draw() {
         this.ctx.clearRect(0, 0, 1400, 600);
@@ -316,7 +323,7 @@ export class gameManager {
             }
             // test call
             console.log("wave clear");
-            this.spawnEntitesLinesPerWave = this.difficulty * this.curWave * 5;
+            this.spawnEntitesLinesPerWave = this.difficulty * this.curWave;
             return 1;
         }
         this.spawnEntitesLinesPerWave--;
@@ -517,10 +524,10 @@ export class gameManager {
             // test call
             // console.log("Keydown: [DOWN]");
         }
-        else if(e.key == "g") {
+        else if(e.key == "g") { // 골드 증가
             this.gold += 15;
         }
-        else if(e.key == "z") {
+        else if(e.key == "z") { // 좀비 제거
             for (let i = 0; i < 5; i++) {
                 for (let j = 0; j < 100; j++) {
                     if(this.zombies[i][j].hp > 0) {
@@ -529,6 +536,11 @@ export class gameManager {
                     }
                 }
             }
+        }
+        else if(e.key == "r") { // 공 강제 리스폰
+            this.ball.x = -100;
+            this.ball.timer = 0;
+            this.ball.respawn();
         }
     }
     keyUpHandler(e) {
@@ -623,8 +635,8 @@ export class gameManager {
         $(retry).on("click", function () {
             $("#game-display .gameOverScreen").remove();
             // 게임 재실행
-            window.location.reload();
-        });
+            this.init(this.difficulty);
+        }.bind(this));
 
         let exit = document.createElement("img");
         $(exit).attr("id", "exit-button");

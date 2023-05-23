@@ -14,6 +14,8 @@ export class Ball {
         this.speed = speed;
         this.dmg = dmg;
         this.color = "red";
+
+        this.timer = 0;
     }
 
     /*
@@ -101,5 +103,21 @@ export class Ball {
         this.angle = 360 - this.angle;
         // test call
         // console.log("ball conflict [TOP BOTTOM]");
+    }
+
+    /*
+    Author : 윤찬규
+    Date : 2023-05-23
+    Description : 공을 리스폰시킵니다.
+    */
+    respawn() {
+        this.speed = 0;
+        if(this.timer++ > 200) {
+            this.timer = 0;
+            this.x = 300;
+            this.y = 300;
+            this.speed = 10;
+            this.angle = 0;
+        }
     }
 }
