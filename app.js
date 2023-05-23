@@ -9,7 +9,7 @@ class App {
 
         this.init();
         this.gm = null;
-        this.inGame(1);
+        this.inGame(3);
     }
     /*
     Author : 윤찬규

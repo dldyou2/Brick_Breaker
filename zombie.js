@@ -141,7 +141,7 @@ export class stdZombie {
     }
 
     knockback() {
-        this.x += 5;
+        this.x += 2;
     }
 }
 
