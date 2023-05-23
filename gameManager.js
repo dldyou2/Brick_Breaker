@@ -103,6 +103,13 @@ export class gameManager {
                     }
                 }
             }
+            for (let i = 0; i < 5; i++) {
+                for (let j = 0; j < 100; j++) {
+                    if(this.zombies[i][j].hp > 0) {
+                        this.zombies[i][j].nextFrame();
+                    }
+                }
+            }
         }
     }
 

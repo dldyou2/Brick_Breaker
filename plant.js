@@ -20,6 +20,12 @@ export class Plant {
         this.frame = 0;
     }
 
+    draw(ctx) {
+        ctx.beginPath();
+        ctx.drawImage(this.img[this.frame], this.x - this.img[this.frame].width / 2, this.y - this.img[this.frame].height / 2);
+        ctx.closePath();
+    }
+
     attack() {
         
     }
@@ -32,6 +38,11 @@ export class Plant {
         return this.hp > 0;
     }
 
+    /*
+    Author : 윤찬규
+    Date : 2023-05-23
+    Description : gif 프레임을 넘깁니다.
+    */
     nextFrame() {
         this.frame = (this.frame + 1) % 7;
     }
@@ -48,12 +59,6 @@ export class Peashooter extends Plant {
             this.img[i].src = "./images/Plants/peashooter/peashooter_" + i + ".png";
         }
     }
-
-    draw(ctx) {
-        ctx.beginPath();
-        ctx.drawImage(this.img[this.frame], this.x - this.img[this.frame].width / 2, this.y - this.img[this.frame].height / 2);
-        ctx.closePath();
-    }
 }
 
 export class Snowpea extends Plant {
@@ -67,12 +72,6 @@ export class Snowpea extends Plant {
             this.img[i].src = "./images/Plants/snowpea/snowpea_" + i + ".png";
         }
     }
-
-    draw(ctx) {
-        ctx.beginPath();
-        ctx.drawImage(this.img[this.frame], this.x - this.img[this.frame].width / 2, this.y - this.img[this.frame].height / 2);
-        ctx.closePath();
-    }
 }
 
 export class Wallnut extends Plant {
@@ -85,11 +84,5 @@ export class Wallnut extends Plant {
         for (let i = 0; i < 7; i++) {
             this.img[i].src = "./images/Plants/wallnut/wallnut_" + i + ".png";
         }
-    }
-
-    draw(ctx) {
-        ctx.beginPath();
-        ctx.drawImage(this.img[this.frame], this.x - this.img[this.frame].width / 2, this.y - this.img[this.frame].height / 2);
-        ctx.closePath();
     }
 }
