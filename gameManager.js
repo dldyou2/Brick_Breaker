@@ -64,7 +64,9 @@ export class gameManager {
         this.animation = null;
         this.upPressed = false;
         this.downPressed = false; // 키가 눌렸는지
-        this.gameOverScreen = null;  
+        this.gameOverScreen = null;
+
+        this.frame = 0;
     }
 
     startGame() {
@@ -91,6 +93,17 @@ export class gameManager {
         this.updatePlantBar();
         this.move();
         this.checkBallConflict();
+        
+        if(++this.frame == 10) {
+            this.frame = 0;
+            for(let i = 0; i < 5; i++) {
+                for(let j = 0; j < 9; j++) {
+                    if(this.plants[i][j].hp > 0) {
+                        this.plants[i][j].nextFrame();
+                    }
+                }
+            }
+        }
     }
 
     /*
@@ -175,7 +188,7 @@ export class gameManager {
     }
     addingPlant(x, y) {
         const img = new Image();
-        img.src = "./images/Plants/" + this.buyStatus + ".gif";
+        img.src = "./images/Plants/" + this.buyStatus + "/" + this.buyStatus + "_0.png";
         this.draw();
         this.ctx.beginPath();
         this.ctx.globalAlpha = 0.5;
