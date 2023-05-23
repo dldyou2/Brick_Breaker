@@ -10,6 +10,7 @@ export class Plant {
         this.x = x;
         this.y = y;
         this.hp = hp;
+        this.fullhp = hp;
         this.dmg = dmg;
 
         this.img = new Array();
@@ -20,6 +21,8 @@ export class Plant {
         this.shadow.src = "./images/Plants/plantshadow.png";
         this.frame = 0;
 
+        this.timer_HP = 0;
+
         this.ball = new Array();
     }
 
@@ -29,7 +32,20 @@ export class Plant {
         ctx.drawImage(this.img[this.frame], this.x - this.img[this.frame].width / 2, this.y - this.img[this.frame].height / 2);
         ctx.closePath();
     }
-    
+
+    drawHP(ctx) {
+        if(this.timer_HP <= 0) return;
+        ctx.beginPath();
+        ctx.lineWidth = 3;
+        ctx.strokeStyle = "black";
+        ctx.strokeRect(this.x - this.img[this.frame].width / 2, this.y - this.img[this.frame].height / 2 - 15, this.img[this.frame].width, 10);
+        ctx.fillStyle = "red";
+        ctx.rect(this.x - this.img[this.frame].width / 2, this.y - this.img[this.frame].height / 2 - 15, this.img[this.frame].width *  (this.hp / this.fullhp), 10);
+        ctx.fill();
+        ctx.closePath();
+        this.timer_HP--;
+    }
+
     damaged(dmg) {
         this.hp -= dmg;
     }

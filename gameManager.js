@@ -33,14 +33,9 @@ export class gameManager {
         this.remainZombie = 0;
         this.spawnPos = [0, 0, 0, 0, 0];
 
-        this.minimumPosOfLinesX = [1600, 1600, 1600, 1600, 1600];
-        this.minimumPosOfLinesIdx = [-1, -1, -1, -1, -1];
         this.zombies = new Array(5);
         for(let i = 0; i < 5; i++) {
             this.zombies[i] = new Array();
-            for(let j = 0; j < 100; j++) {
-                this.zombies[i].push(new stdZombie(0, 0, 0, 0, 0, 0, 0));
-            }
         }
         this.zombiePos;
 
@@ -92,14 +87,9 @@ export class gameManager {
         this.remainZombie = 0;
         this.spawnPos = [0, 0, 0, 0, 0];
 
-        this.minimumPosOfLinesX = [1600, 1600, 1600, 1600, 1600];
-        this.minimumPosOfLinesIdx = [-1, -1, -1, -1, -1];
         this.zombies = new Array(5);
         for(let i = 0; i < 5; i++) {
             this.zombies[i] = new Array();
-            for(let j = 0; j < 100; j++) {
-                this.zombies[i].push(new stdZombie(0, 0, 0, 0, 0, 0, 0));
-            }
         }
         this.zombiePos;
 
@@ -168,10 +158,8 @@ export class gameManager {
                 }
             }
             for (let i = 0; i < 5; i++) {
-                for (let j = 0; j < 100; j++) {
-                    if(this.zombies[i][j].hp > 0) {
-                        this.zombies[i][j].nextFrame();
-                    }
+                for (let j = 0; j < this.zombies[i].length; j++) {
+                    this.zombies[i][j].nextFrame();
                 }
             }
         }
@@ -183,24 +171,36 @@ export class gameManager {
     Description : 움직임과 관련된 함수입니다.
     */
     move() {
+        const interval = [330, 405, 495, 575, 660, 735, 815, 885, 980];
         this.ball.move(this.ctx);
         this.stick.move(this.ctx, this.upPressed - this.downPressed);
         for (let i = 0; i < 5; i++) {
-            this.minimumPosOfLinesIdx[i] = -1;
-            this.minimumPosOfLinesX[i] = 1600;
-            for (let j = 0; j < 100; j++) {
-                if (this.zombies[i][j].hp > 0) {
-                    this.zombies[i][j].move(this.ctx);
-                    this.zombies[i][j].drawHP(this.ctx);
-                    this.zombies[i][j].slowOFF();
+            for (let j = 0; j < this.zombies[i].length; j++) {
+                const zPosS = this.zombies[i][j].x - this.zombies[i][j].width / 2;
+                const zPosE = this.zombies[i][j].x + this.zombies[i][j].width / 2;
 
-                    if (this.zombies[i][j].x < this.minimumPosOfLinesX[i]) {
-                        this.minimumPosOfLinesX[i] = this.zombies[i][j].x;
-                        this.minimumPosOfLinesIdx[i] = j;
-                        if(this.zombies[i][j].isEnd()) {
-                            return 1;
-                        }
+                let idx = -1;
+                for (let k = 0; k < interval.length; k++) {
+                    if(this.plants[i][k].hp > 0 && zPosS <= interval[k] && zPosE >= interval[k]) {
+                        idx = k;
+                        break;
                     }
+                }
+
+                if(idx == -1) {
+                    this.zombies[i][j].move(this.ctx);
+                }
+                else {
+                    if(this.zombies[i][j].attack(this.ctx)) {
+                        this.plants[i][idx].hp -= this.zombies[i][j].dmg;
+                        this.plants[i][idx].timer_HP = 100;
+                    }
+                }
+                this.zombies[i][j].drawHP(this.ctx);
+                this.zombies[i][j].slowOFF();
+
+                if(this.zombies[i][j].isEnd()) {
+                    return 1;
                 }
             }
         }
@@ -208,26 +208,37 @@ export class gameManager {
             for(let j = 0; j < 9; j++) {
                 if(this.plants[i][j].hp > 0) {
                     this.plants[i][j].draw(this.ctx);
+                    this.plants[i][j].drawHP(this.ctx);
                     if(this.plants[i][j].ball.length == 0) continue;
 
                     let removeIdx = new Array();
                     for(let k in this.plants[i][j].ball) {
                         this.plants[i][j].ball[k].x += this.plants[i][j].ball[k].speed;
                         this.plants[i][j].ball[k].draw(this.ctx);
-                        if(this.minimumPosOfLinesIdx[i] == -1) continue;
                         if(this.plants[i][j].ball[k].x >= 1400) {
                             removeIdx.push(k);
                             continue;
                         }
-                        if(this.plants[i][j].ball[k].x + this.plants[i][j].ball[k].img.width >= this.zombies[i][this.minimumPosOfLinesIdx[i]].x) {
-                            if(this.plants[i][j] instanceof Snowpea) {
-                                this.zombies[i][this.minimumPosOfLinesIdx[i]].slowON();
+                        
+                        let flag = 0;
+                        for(let l = 0; l < this.zombies[i].length; l++) {
+                            const atkPosS = this.plants[i][j].ball[k].x - this.plants[i][j].ball[k].img.width / 2;
+                            const atkPosE = this.plants[i][j].ball[k].x + this.plants[i][j].ball[k].img.width / 2;
+                            const zPosS = this.zombies[i][l].x - this.zombies[i][l].width / 2;
+                            const zPosE = this.zombies[i][l].x + this.zombies[i][l].width / 2;
+
+                            if(atkPosE >= zPosS && atkPosS <= zPosE) {
+                                if(this.plants[i][j] instanceof Peashooter) {
+                                    this.zombies[i][l].knockback();
+                                }
+                                else if(this.plants[i][j] instanceof Snowpea) {
+                                    this.zombies[i][l].slowON();
+                                }
+                                flag = 1;
                             }
-                            else if(this.plants[i][j] instanceof Peashooter) {
-                                this.zombies[i][this.minimumPosOfLinesIdx[i]].knockback();
-                            }
+                        }
+                        if(flag == 1) {
                             removeIdx.push(k);
-                            continue;
                         }
                     }
                     for(let k = removeIdx.length - 1; k >= 0; k--) {
@@ -243,7 +254,7 @@ export class gameManager {
         this.ball.draw(this.ctx);
         this.stick.draw(this.ctx);
         for (let i = 0; i < 5; i++) {
-            for (let j = 0; j < 100; j++) {
+            for (let j = 0; j < this.zombies[i].length; j++) {
                 if(this.zombies[i][j].hp > 0) {
                     this.zombies[i][j].draw(this.ctx);
                 }
@@ -424,14 +435,8 @@ export class gameManager {
         */
         for(let i = 0; i < 5; i++) {
             if(this.spawnPos[i] == 1) {
-                let zombie = this.randZombie(i);
-                for(let j = 0; j < 100; j++) {
-                    if(this.zombies[i][j].hp <= 0) {
-                        this.zombies[i][j] = zombie;
-                        this.remainZombie += 1;
-                        break;
-                    }
-                }
+                this.zombies[i].push(this.randZombie(i));
+                this.remainZombie += 1;
             }
             this.spawnPos[i] = 0;
         }
@@ -493,7 +498,8 @@ export class gameManager {
             if(this.ball.y + this.ball.r >= range_s[i] && this.ball.y - this.ball.r <= range_e[i]) {
                 // 해당 줄의 좀비들과 충돌 검사
                 let isConflict = false;
-                for(let j = 0; j < 100; j++) {
+                let removeIdx = new Array();
+                for(let j = 0; j < this.zombies[i].length; j++) {
                     if(this.zombies[i][j].hp <= 0) continue;
                     this.zombiePos = {
                         x: this.zombies[i][j].x,
@@ -515,6 +521,7 @@ export class gameManager {
                         this.zombies[i][j].hp -= this.ball.dmg;
                         this.zombies[i][j].timer_HP = 100; // 충돌 시 체력 바
                         if(this.zombies[i][j].hp <= 0) {
+                            removeIdx.push(j);
                             this.remainZombie--;
                             // test call
                             console.log("remain zombies: " + this.remainZombie);
@@ -532,6 +539,9 @@ export class gameManager {
                     }
                 }
                 if(isConflict) {
+                    for(let j = removeIdx.length - 1; j >= 0; j--) {
+                        this.zombies[i].splice(j, 1);
+                    }
                     break;
                 }
             }
@@ -563,14 +573,9 @@ export class gameManager {
             console.log("GOLD + 15");
         }
         else if(e.key == "z") { // 좀비 제거
-            for (let i = 0; i < 5; i++) {
-                for (let j = 0; j < 100; j++) {
-                    if(this.zombies[i][j].hp > 0) {
-                        this.zombies[i][j].hp = 0;
-                        this.remainZombie--;
-                    }
-                }
-            }
+            for (let i = 0; i < 5; i++) 
+                this.zombies[i].length = 0;
+            this.remainZombie = 0;
 
             // test call
             console.log("KILL ALL ZOMBIES");
@@ -585,7 +590,7 @@ export class gameManager {
         }
         else if(e.key == "f") {
             for (let i = 0; i < 5; i++) {
-                for (let j = 0; j < 100; j++) {
+                for (let j = 0; j < this.zombies[i].length; j++) {
                     if(this.zombies[i][j].hp > 0) {
                         if(this.zombies[i][j] instanceof Zombie) {
                             this.zombies[i][j].speed = 5;
@@ -619,7 +624,7 @@ export class gameManager {
         }
         else if(e.key == "f") {
             for (let i = 0; i < 5; i++) {
-                for (let j = 0; j < 100; j++) {
+                for (let j = 0; j < this.zombies[i].length; j++) {
                     if(this.zombies[i][j].hp > 0) {
                         if(this.zombies[i][j] instanceof Zombie) {
                             this.zombies[i][j].speed = 0.5;
@@ -649,13 +654,13 @@ export class gameManager {
             console.log(this.addPlantX + " " + this.addPlantY);
             if(this.plants[this.addPlantY][this.addPlantX].hp > 0) return;
             if(this.buyStatus == plantsName[0]) {
-                this.plants[this.addPlantY][this.addPlantX] = new Peashooter(this.addPlantX * 83 + 291.5, this.addPlantY * 100 + 107.5, 5, 0);
+                this.plants[this.addPlantY][this.addPlantX] = new Peashooter(this.addPlantX * 83 + 291.5, this.addPlantY * 100 + 107.5, 20, 0);
             }
             else if(this.buyStatus == plantsName[1]) {
-                this.plants[this.addPlantY][this.addPlantX] = new Snowpea(this.addPlantX * 83 + 291.5, this.addPlantY * 100 + 107.5, 10, 0);
+                this.plants[this.addPlantY][this.addPlantX] = new Snowpea(this.addPlantX * 83 + 291.5, this.addPlantY * 100 + 107.5, 30, 0);
             }
             else if(this.buyStatus == plantsName[2]) {
-                this.plants[this.addPlantY][this.addPlantX] = new Wallnut(this.addPlantX * 83 + 291.5, this.addPlantY * 100 + 107.5, 5, 0);
+                this.plants[this.addPlantY][this.addPlantX] = new Wallnut(this.addPlantX * 83 + 291.5, this.addPlantY * 100 + 107.5, 100, 0);
             }
             this.buyStatus = 0;
             document.removeEventListener("mousemove", this.buyEvent);
