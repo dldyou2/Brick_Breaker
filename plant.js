@@ -17,11 +17,14 @@ export class Plant {
         for (let i = 0; i < 7; i++) {
             this.img.push(new Image());
         }
+        this.shadow = new Image();
+        this.shadow.src = "./images/Plants/plantshadow.png";
         this.frame = 0;
     }
 
     draw(ctx) {
         ctx.beginPath();
+        ctx.drawImage(this.shadow, this.x - this.shadow.width / 2, this.y + 15);
         ctx.drawImage(this.img[this.frame], this.x - this.img[this.frame].width / 2, this.y - this.img[this.frame].height / 2);
         ctx.closePath();
     }
@@ -45,6 +48,9 @@ export class Plant {
     */
     nextFrame() {
         this.frame = (this.frame + 1) % 7;
+        if(this.frame == 6) {
+            this.attack();
+        }
     }
 }
 

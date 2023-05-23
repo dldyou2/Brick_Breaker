@@ -24,6 +24,8 @@ export class stdZombie {
         for (let i = 0; i < 7; i++) {
             this.img.push(new Image());
         }
+        this.shadow = new Image();
+        this.shadow.src = "./images/Zombie/zombieshadow.png";
         this.frame = 0;
     }
     /*
@@ -49,6 +51,7 @@ export class stdZombie {
         ctx.beginPath();
         const fixW = Math.floor(this.img[this.frame].width * 0.8);
         const fixH = Math.floor(this.img[this.frame].height * 0.8);
+        ctx.drawImage(this.shadow, this.x, this.y + 30);
         ctx.drawImage(this.img[this.frame], this.x - fixW / 2, this.y - fixH / 2, fixW, fixH);
         ctx.closePath();
     }

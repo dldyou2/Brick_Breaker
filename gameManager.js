@@ -17,13 +17,13 @@ export class gameManager {
         this.ctx = ctx;
         
         this.difficulty = difficulty;
-        this.maxWave = 3;
+        this.maxWave = 1;
         this.curWave = 1;
-        this.spawnTime = 200;
+        this.spawnTime = 150 - 50 * difficulty;
         this.timer = 0;
         
-        this.ball = new Ball(300, 300, 15, 0, 15, 1);
-        this.stick = new Stick(220, 300, 20, 125, 20);
+        this.ball = new Ball(300, 300, 15, 0, 10, 1);
+        this.stick = new Stick(220, 300, 20, 125, 10);
 
         this.gold = 0;
         // zombie
@@ -65,8 +65,66 @@ export class gameManager {
         this.upPressed = false;
         this.downPressed = false; // 키가 눌렸는지
         this.gameOverScreen = null;
+        this.gamestate = 0; // 0: normal / 1: wave clear / 99: difficulty clear
 
         this.frame = 0;
+    }
+
+    init(difficulty) {
+        if(difficulty > 3) return;
+        this.difficulty = difficulty;
+        this.maxWave = 3;
+        this.curWave = 1;
+        this.spawnTime = 150 - 50 * difficulty;
+        this.timer = 0;
+        
+        this.ball = new Ball(300, 300, 15, 0, 10, 1);
+        this.stick = new Stick(220, 300, 20, 125, 10);
+
+        this.gold = 0;
+        // zombie
+        this.spawnEntitesLinesPerWave = this.difficulty * this.curWave * 3;
+        this.minimumSpawnEntitiesPerLine = this.difficulty;
+        this.maximumSpawnEntitiesPerLine = Math.min(this.difficulty * 2, 5);
+        this.remainZombie = 0;
+        this.spawnPos = [0, 0, 0, 0, 0];
+
+        this.minimumPosOfLinesX = [1600, 1600, 1600, 1600, 1600];
+        this.minimumPosOfLinesIdx = [-1, -1, -1, -1, -1];
+        this.zombies = new Array(5);
+        for(let i = 0; i < 5; i++) {
+            this.zombies[i] = new Array();
+            for(let j = 0; j < 100; j++) {
+                this.zombies[i].push(new stdZombie(0, 0, 0, 0, 0, 0, 0));
+            }
+        }
+        this.zombiePos;
+
+        // plant
+        this.plantPrice = {
+            peashooter:100,
+            snowpea:175,
+            wallnut:50
+        }
+        this.plants = new Array(5);
+        for(let i = 0; i < 5; i++) {
+            this.plants[i] = new Array();
+            for(let j = 0; j < 9; j++) {
+                this.plants[i].push(new Plant(0, 0, 0, 0, 0));
+            }
+        }
+        this.buyStatus = 0;
+        this.buyEvent = null;
+        this.addPlantX = 0, this.addPlantY = 0;
+
+        this.animation = null;
+        this.upPressed = false;
+        this.downPressed = false; // 키가 눌렸는지
+        this.gameOverScreen = null;
+        this.gamestate = 0; // 0: normal / 1: wave clear / 99: difficulty clear
+
+        this.frame = 0;
+        this.startGame();
     }
 
     startGame() {
@@ -245,21 +303,23 @@ export class gameManager {
     */
     /*******************************************************************************************************/
     waveManage() {
-        if(this.spawnEntitesLinesPerWave-- == 0) {
-            // wave cleark
-            // test call
-            console.log("wave clear");
-            if(this.curWave++ > this.maxWave)  {
+        if(this.spawnEntitesLinesPerWave == 0) {
+            if(this.remainZombie != 0) return 0;
+            // wave clear
+            if(++this.curWave > this.maxWave)  {
                 // difficulty clear
-                // test call
                 window.cancelAnimationFrame(this.animation);
                 this.showGameClearScreen();
+                // test call
                 console.log("difficulty clear");
                 return 99;
             }
+            // test call
+            console.log("wave clear");
             this.spawnEntitesLinesPerWave = this.difficulty * this.curWave * 5;
             return 1;
         }
+        this.spawnEntitesLinesPerWave--;
         // test call
         console.log("remain " + this.spawnEntitesLinesPerWave + " lines at [" + this.curWave + "/" + this.maxWave + "]");
         return 0;
@@ -267,9 +327,12 @@ export class gameManager {
 
     generateZombie() {
         if(this.timer++ < this.spawnTime) return;
-        this.setSpawnPos();
-        this.waveManage();
-        this.spawnZombie();
+        
+        if(this.spawnEntitesLinesPerWave > 0) {
+            this.setSpawnPos();
+            this.spawnZombie();
+        }
+        this.gamestate = this.waveManage();
         this.timer = 0;
 
         // test call
@@ -288,7 +351,7 @@ export class gameManager {
     setSpawnPos() {
         let spawnEntities = this.randRange(this.minimumSpawnEntitiesPerLine, this.maximumSpawnEntitiesPerLine);
         // test call 
-        console.log("Spawn: " + spawnEntities);
+        // console.log("Spawn: " + spawnEntities);
 
         for(let i = 0; i < spawnEntities; i++) {
             this.spawnPos[i] = 1;
@@ -296,19 +359,19 @@ export class gameManager {
         this.shuffleSpawnPos();
 
         // test call
-        console.log(this.spawnPos);
+        // console.log(this.spawnPos);
     }
 
     randZombie(i) {
         let r = this.randRange(1, 100);
         if(r < 70) {
-            return new Zombie(1400, i * 101 + 120, 50, 80, 1, 1, 1);
+            return new Zombie(1400, i * 101 + 120, 50, 80, 0.5, 1, 1);
         }
         else if(r < 90) {
-            return new ConeheadZombie(1400, i * 101 + 120, 50, 80, 0.75, 5, 1);
+            return new ConeheadZombie(1400, i * 101 + 120, 50, 80, 0.3, 5, 1);
         }
         else {
-            return new BucketheadZombie(1400, i * 101 + 120, 50, 80, 0.5, 10, 1);
+            return new BucketheadZombie(1400, i * 101 + 120, 50, 80, 0.1, 10, 1);
         }
     }
 
@@ -407,9 +470,6 @@ export class gameManager {
                         this.ball.conflictLeftRight(), isConflict = true;
                     else if(this.isConflictTopBottom()) 
                         this.ball.conflictTopBottom(), isConflict = true;
-                    
-                    while(this.isConflictLeftRight() || this.isConflictTopBottom()) 
-                        this.ball.nextPos();
 
                     // 충돌 시 데미지
                     if(isConflict) {
@@ -459,6 +519,16 @@ export class gameManager {
         }
         else if(e.key == "g") {
             this.gold += 15;
+        }
+        else if(e.key == "z") {
+            for (let i = 0; i < 5; i++) {
+                for (let j = 0; j < 100; j++) {
+                    if(this.zombies[i][j].hp > 0) {
+                        this.zombies[i][j].hp = 0;
+                        this.remainZombie--;
+                    }
+                }
+            }
         }
     }
     keyUpHandler(e) {
@@ -601,8 +671,8 @@ export class gameManager {
         $(next).on("click", function () {
             $("#game-display .gameClearScreen").remove();
             // 다음 스테이지 진행
-
-        });
+            this.init(++this.difficulty);
+        }.bind(this));
 
         let exit = document.createElement("img");
         $(exit).attr("id", "exit-button");
