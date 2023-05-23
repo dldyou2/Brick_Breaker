@@ -67,6 +67,9 @@ export class gameManager {
         this.gameOverScreen = null;
         this.gamestate = 0; // 0: normal / 1: wave clear / 99: difficulty clear
 
+        this.event_keydown = this.keyDownHandler.bind(this);
+        this.event_keyup = this.keyUpHandler.bind(this);
+        this.event_click = this.mouseClicked.bind(this);
         this.frame = 0;
     }
 
@@ -542,6 +545,23 @@ export class gameManager {
             this.ball.timer = 0;
             this.ball.respawn();
         }
+        else if(e.key == "f") {
+            for (let i = 0; i < 5; i++) {
+                for (let j = 0; j < 100; j++) {
+                    if(this.zombies[i][j].hp > 0) {
+                        if(this.zombies[i][j] instanceof Zombie) {
+                            this.zombies[i][j].speed = 5;
+                        }
+                        else if(this.zombies[i][j] instanceof ConeheadZombie) {
+                            this.zombies[i][j].speed = 3;
+                        }
+                        else if(this.zombies[i][j] instanceof BucketheadZombie) {
+                            this.zombies[i][j].speed = 1;
+                        }
+                    }
+                }
+            }
+        }
     }
     keyUpHandler(e) {
         if(e.key === "Up" || e.key === "ArrowUp") {
@@ -555,6 +575,23 @@ export class gameManager {
 
             // test call
             // console.log("Keyup: [DOWN]");
+        }
+        else if(e.key == "f") {
+            for (let i = 0; i < 5; i++) {
+                for (let j = 0; j < 100; j++) {
+                    if(this.zombies[i][j].hp > 0) {
+                        if(this.zombies[i][j] instanceof Zombie) {
+                            this.zombies[i][j].speed = 0.5;
+                        }
+                        else if(this.zombies[i][j] instanceof ConeheadZombie) {
+                            this.zombies[i][j].speed = 0.3;
+                        }
+                        else if(this.zombies[i][j] instanceof BucketheadZombie) {
+                            this.zombies[i][j].speed = 0.1;
+                        }
+                    }
+                }
+            }
         }
     }
     /* 
@@ -588,18 +625,23 @@ export class gameManager {
     mouseMoved(e) {
         let x = e.pageX - $("#myCanvas").offset().left;
         let y = e.pageY - $("#myCanvas").offset().top;
-
+        console.log(x, y);
         this.addingPlant(x, y);
     }
     /*
     Author : 윤찬규
     Date : 2023-05-12
-    Description : 이벤트 리스너를 추가하는 함수
+    Description : 이벤트 리스너
     */
     addEventListeners() {
-        document.addEventListener("keydown", this.keyDownHandler.bind(this), false);
-        document.addEventListener("keyup", this.keyUpHandler.bind(this), false);
-        document.addEventListener("click", this.mouseClicked.bind(this), false);
+        document.addEventListener("keydown", this.event_keydown, false);
+        document.addEventListener("keyup", this.event_keyup, false);
+        document.addEventListener("click", this.event_click, false);
+    }
+    removeEventListeners() {
+        document.removeEventListener("keydown", this.event_keydown);
+        document.removeEventListener("keyup", this.event_keyup);
+        document.removeEventListener("click", this.event_click);
     }
     /*******************************************************************************************************/
 
@@ -635,6 +677,7 @@ export class gameManager {
         $(retry).on("click", function () {
             $("#game-display .gameOverScreen").remove();
             // 게임 재실행
+            this.removeEventListeners();
             this.init(this.difficulty);
         }.bind(this));
 
@@ -683,6 +726,7 @@ export class gameManager {
         $(next).on("click", function () {
             $("#game-display .gameClearScreen").remove();
             // 다음 스테이지 진행
+            this.removeEventListeners();
             this.init(++this.difficulty);
         }.bind(this));
 
