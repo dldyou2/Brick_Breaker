@@ -1,4 +1,5 @@
 import { Ball } from "./ball.js";
+import { Peashooter, Plant, Snowpea, Wallnut } from "./plant.js";
 import { Stick } from "./stick.js";
 import { stdZombie, Zombie, ConeheadZombie, BucketheadZombie } from "./zombie.js";
 /*
@@ -16,7 +17,7 @@ export class gameManager {
         this.ctx = ctx;
         
         this.difficulty = difficulty;
-        this.maxWave = 5;
+        this.maxWave = 3;
         this.curWave = 1;
         this.spawnTime = 200;
         this.timer = 0;
@@ -26,7 +27,7 @@ export class gameManager {
 
         this.gold = 0;
         // zombie
-        this.spawnEntitesLinesPerWave = this.difficulty * this.curWave * 5;
+        this.spawnEntitesLinesPerWave = this.difficulty * this.curWave * 3;
         this.minimumSpawnEntitiesPerLine = this.difficulty;
         this.maximumSpawnEntitiesPerLine = Math.min(this.difficulty * 2, 5);
         this.remainZombie = 0;
@@ -49,6 +50,16 @@ export class gameManager {
             snowpea:175,
             wallnut:50
         }
+        this.plants = new Array(5);
+        for(let i = 0; i < 5; i++) {
+            this.plants[i] = new Array();
+            for(let j = 0; j < 9; j++) {
+                this.plants[i].push(new Plant(0, 0, 0, 0, 0));
+            }
+        }
+        this.buyStatus = 0;
+        this.buyEvent = null;
+        this.addPlantX = 0, this.addPlantY = 0;
 
         this.animation = null;
         this.upPressed = false;
@@ -60,6 +71,7 @@ export class gameManager {
         this.addEventListeners();
         this.initGameOverScreen();
         this.initGameClearScreen();
+        this.checkPlantBar();
         this.animate();
 
         // test call
@@ -70,7 +82,7 @@ export class gameManager {
         this.ctx.clearRect(0, 0, 1400, 600);
         this.animation = window.requestAnimationFrame(this.animate.bind(this));
         this.generateZombie();
-        if(this.ball.isLeft()) {
+        if (this.ball.isLeft()) {
             window.cancelAnimationFrame(this.animation);
             this.showGameOverScreen();
             // test call
@@ -89,15 +101,41 @@ export class gameManager {
     move() {
         this.ball.move(this.ctx);
         this.stick.move(this.ctx, this.upPressed - this.downPressed);
-        for(let i = 0; i < 5; i++) {
-            for(let j = 0; j < 100; j++) {
-                if(this.zombies[i][j].hp > 0) {
+        for (let i = 0; i < 5; i++) {
+            for (let j = 0; j < 100; j++) {
+                if (this.zombies[i][j].hp > 0) {
                     this.zombies[i][j].move(this.ctx);
                     this.zombies[i][j].drawHP(this.ctx);
-                    if(this.zombies[i][j].x < this.minimumPosOfLinesX[i]) {
+                    if (this.zombies[i][j].x < this.minimumPosOfLinesX[i]) {
                         this.minimumPosOfLinesX[i] = this.zombies[i][j].x;
                         this.minimumPosOfLinesIdx[i] = j;
                     }
+                }
+            }
+        }
+        for(let i = 0; i < 5; i++) {
+            for(let j = 0; j < 9; j++) {
+                if(this.plants[i][j].hp > 0) {
+                    this.plants[i][j].draw(this.ctx);
+                }
+            }
+        }
+    }
+    draw() {
+        this.ctx.clearRect(0, 0, 1400, 600);
+        this.ball.draw(this.ctx);
+        this.stick.draw(this.ctx);
+        for (let i = 0; i < 5; i++) {
+            for (let j = 0; j < 100; j++) {
+                if(this.zombies[i][j].hp > 0) {
+                    this.zombies[i][j].draw(this.ctx);
+                }
+            }
+        }
+        for(let i = 0; i < 5; i++) {
+            for(let j = 0; j < 9; j++) {
+                if(this.plants[i][j].hp > 0) {
+                    this.plants[i][j].draw(this.ctx);
                 }
             }
         }
@@ -108,8 +146,52 @@ export class gameManager {
     Description : 식물과 관련된 함수들입니다.
     */
     /*******************************************************************************************************/
-    initPlantBar() {
+    checkPlantBar() {
+        const plantsName = ["peashooter", "snowpea", "wallnut"];
+        $(".plants").each(function(idx, item) {
+            $(item).on("click", function() {
+                if(this.buyStatus == 0) 
+                    this.addPlant(plantsName[idx]);
+            }.bind(this));
+        }.bind(this));
+    }
+    addPlant(plantName) {
+        const src = "./images/In-Game/bar/" + plantName + "-card.png";
+        // test call
+        console.log(plantName + " clicked");
+        if (this.gold >= this.plantPrice[plantName]) {
+            this.gold -= this.plantPrice[plantName];
+            
+            // clear 후 프레임 넘겨서 구매 후 화면으로 갱신 후 다시 clear
+            window.cancelAnimationFrame(this.animation);
+            this.animate();
+            window.cancelAnimationFrame(this.animation);
 
+            this.buyStatus = plantName;
+            this.buyEvent = this.mouseMoved.bind(this);
+            document.addEventListener("mousemove", this.buyEvent);
+            console.log("pause game: buy plant");
+        }
+    }
+    addingPlant(x, y) {
+        const img = new Image();
+        img.src = "./images/Plants/" + this.buyStatus + ".gif";
+        this.draw();
+        this.ctx.beginPath();
+        this.ctx.globalAlpha = 0.5;
+        if(x >= 250 && x <= 1000 && y >= 75 && y <= 575) {
+            let tx = Math.floor((x - 251) / 83);
+            let ty = Math.floor((y - 76) / 100);
+            this.addPlantX = tx;
+            this.addPlantY = ty;
+
+            this.ctx.drawImage(img, tx * 83 + 291.5 - img.width / 2, ty * 100 + 107.5 - img.height / 2);
+        }
+        else {
+            this.ctx.drawImage(img, x - img.width / 2, y - img.height / 2);
+        }
+        this.ctx.globalAlpha = 1;
+        this.ctx.closePath();
     }
     updatePlantBar() {
         const plantsName = ["peashooter", "snowpea", "wallnut"];
@@ -122,10 +204,10 @@ export class gameManager {
         const png = ".png";
 
         // 식물을 설치 할 수 있는지 없는지
-        for(let i in plantsName) {
+        for (let i in plantsName) {
             let plantName = plantsName[i];
             let selector = "#" + plantName + "-card";
-            if(this.gold >= this.plantPrice[plantName]) {
+            if (this.gold >= this.plantPrice[plantName]) {
                 $(selector).attr("src", src[plantName] + png);
             }
             else {
@@ -159,7 +241,7 @@ export class gameManager {
             return 1;
         }
         // test call
-        console.log("remain wave: " + this.spawnEntitesLinesPerWave);
+        console.log("remain " + this.spawnEntitesLinesPerWave + " lines at [" + this.curWave + "/" + this.maxWave + "]");
         return 0;
     }
 
@@ -171,8 +253,8 @@ export class gameManager {
         this.timer = 0;
 
         // test call
-        console.log("MIN POS: " + this.minimumPosOfLinesX);
-        console.log("MIN IDX: " + this.minimumPosOfLinesIdx);
+        // console.log("MIN POS: " + this.minimumPosOfLinesX);
+        // console.log("MIN IDX: " + this.minimumPosOfLinesIdx);
     }
 
     shuffleSpawnPos() {
@@ -231,6 +313,8 @@ export class gameManager {
             }
             this.spawnPos[i] = 0;
         }
+        // test call
+        console.log("remain zombies: " + this.remainZombie);
     }
     /*******************************************************************************************************/
     
@@ -255,7 +339,7 @@ export class gameManager {
             this.ball.conflictStick((this.ball.y - this.stick.y) / this.stick.height * 2);
 
             // test call
-            console.log("ball conflict [Stick]");
+            // console.log("ball conflict [Stick]");
         } 
     }
     isConflictLeftRight() {
@@ -313,6 +397,8 @@ export class gameManager {
                         this.zombies[i][j].timer_HP = 100; // 충돌 시 체력 바
                         if(this.zombies[i][j].hp <= 0) {
                             this.remainZombie--;
+                            // test call
+                            console.log("remain zombies: " + this.remainZombie);
                             if(this.zombies[i][j] instanceof Zombie) {
                                 this.gold += 15;
                             }
@@ -372,10 +458,36 @@ export class gameManager {
     /* 
     Author : 윤찬규
     Date : 2023-05-19
-    Description : 마우스 이벤트(디버깅용)
+    Description : 마우스 이벤트
     */
     mouseClicked(e) {
-        console.log("x: " + e.screenX + " y: " + e.screenY);
+        const plantsName = ["peashooter", "snowpea", "wallnut"];
+        let x = e.pageX - $("#myCanvas").offset().left;
+        let y = e.pageY - $("#myCanvas").offset().top;
+        console.log("x: " + x + " y: " + y);
+        if(this.buyStatus != 0 && x >= 250 && x <= 1000 && y >= 75 && y <= 575) {
+            console.log(this.addPlantX + " " + this.addPlantY);
+            if(this.plants[this.addPlantY][this.addPlantX].hp > 0) return;
+            if(this.buyStatus == plantsName[0]) {
+                this.plants[this.addPlantY][this.addPlantX] = new Peashooter(this.addPlantX * 83 + 291.5, this.addPlantY * 100 + 107.5, 5, 0, 1);
+            }
+            else if(this.buyStatus == plantsName[1]) {
+                this.plants[this.addPlantY][this.addPlantX] = new Snowpea(this.addPlantX * 83 + 291.5, this.addPlantY * 100 + 107.5, 10, 0, 0.5);
+            }
+            else if(this.buyStatus == plantsName[2]) {
+                this.plants[this.addPlantY][this.addPlantX] = new Wallnut(this.addPlantX * 83 + 291.5, this.addPlantY * 100 + 107.5, 5, 0, 1);
+            }
+            this.buyStatus = 0;
+            document.removeEventListener("mousemove", this.buyEvent);
+            this.animate();
+            console.log("add Plant");
+        }
+    }
+    mouseMoved(e) {
+        let x = e.pageX - $("#myCanvas").offset().left;
+        let y = e.pageY - $("#myCanvas").offset().top;
+
+        this.addingPlant(x, y);
     }
     /*
     Author : 윤찬규
@@ -385,7 +497,7 @@ export class gameManager {
     addEventListeners() {
         document.addEventListener("keydown", this.keyDownHandler.bind(this), false);
         document.addEventListener("keyup", this.keyUpHandler.bind(this), false);
-        document.addEventListener("click", this.mouseClicked, false);
+        document.addEventListener("click", this.mouseClicked.bind(this), false);
     }
     /*******************************************************************************************************/
 

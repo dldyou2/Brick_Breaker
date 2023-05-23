@@ -31,4 +31,40 @@ export class Peashooter extends Plant {
     constructor(x, y, hp, dmg, atk_speed) {
         super(x, y, hp, dmg, atk_speed);
     }
+
+    draw(ctx) {
+        const img = new Image();
+        img.src = "./images/Plants/peashooter.gif";
+        ctx.beginPath();
+        ctx.drawImage(img, this.x - img.width / 2, this.y - img.height / 2);
+        ctx.closePath();
+    }
+}
+
+export class Snowpea extends Plant {
+    constructor(x, y, hp, dmg, atk_speed) {
+        super(x, y, hp, dmg, atk_speed);
+    }
+
+    draw(ctx) {
+        const img = new Image();
+        img.src = "./images/Plants/snowpea.gif";
+        ctx.beginPath();
+        ctx.drawImage(img, this.x - img.width / 2, this.y - img.height / 2);
+        ctx.closePath();
+    }
+}
+
+export class Wallnut extends Plant {
+    constructor(x, y, hp, dmg, atk_speed) {
+        super(x, y, hp, dmg, atk_speed);
+    }
+
+    draw(ctx) {
+        const img = new Image();
+        img.src = "./images/Plants/wallnut.gif";
+        ctx.beginPath();
+        ctx.drawImage(img, this.x - img.width / 2, this.y - img.height / 2);
+        ctx.closePath();
+    }
 }
