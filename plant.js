@@ -6,12 +6,11 @@
     기본 식물 모델입니다. 상속하여 여러 식물에 사용합니다.
 */
 export class Plant {
-    constructor(x, y, hp, dmg, atk_speed) {
+    constructor(x, y, hp, dmg) {
         this.x = x;
         this.y = y;
         this.hp = hp;
         this.dmg = dmg;
-        this.atk_speed = atk_speed;
 
         this.img = new Array();
         for (let i = 0; i < 7; i++) {
@@ -20,6 +19,8 @@ export class Plant {
         this.shadow = new Image();
         this.shadow.src = "./images/Plants/plantshadow.png";
         this.frame = 0;
+
+        this.ball = new Array();
     }
 
     draw(ctx) {
@@ -27,10 +28,6 @@ export class Plant {
         ctx.drawImage(this.shadow, this.x - this.shadow.width / 2, this.y + 15);
         ctx.drawImage(this.img[this.frame], this.x - this.img[this.frame].width / 2, this.y - this.img[this.frame].height / 2);
         ctx.closePath();
-    }
-
-    attack() {
-        
     }
     
     damaged(dmg) {
@@ -41,6 +38,9 @@ export class Plant {
         return this.hp > 0;
     }
 
+    attack() {
+        
+    }
     /*
     Author : 윤찬규
     Date : 2023-05-23
@@ -55,8 +55,8 @@ export class Plant {
 }
 
 export class Peashooter extends Plant {
-    constructor(x, y, hp, dmg, atk_speed) {
-        super(x, y, hp, dmg, atk_speed);
+    constructor(x, y, hp, dmg) {
+        super(x, y, hp, dmg);
         this.#setImage();
     }
 
@@ -65,11 +65,15 @@ export class Peashooter extends Plant {
             this.img[i].src = "./images/Plants/peashooter/peashooter_" + i + ".png";
         }
     }
+    
+    attack() {
+        this.ball.push(new PlantBall(this.x - 35, this.y - 35, 5, "peashooter"));
+    }
 }
 
 export class Snowpea extends Plant {
-    constructor(x, y, hp, dmg, atk_speed) {
-        super(x, y, hp, dmg, atk_speed);
+    constructor(x, y, hp, dmg) {
+        super(x, y, hp, dmg);
         this.#setImage();
     }
 
@@ -78,11 +82,15 @@ export class Snowpea extends Plant {
             this.img[i].src = "./images/Plants/snowpea/snowpea_" + i + ".png";
         }
     }
+
+    attack() {
+        this.ball.push(new PlantBall(this.x - 35, this.y - 35, 5, "snowpea"));
+    }
 }
 
 export class Wallnut extends Plant {
-    constructor(x, y, hp, dmg, atk_speed) {
-        super(x, y, hp, dmg, atk_speed);
+    constructor(x, y, hp, dmg) {
+        super(x, y, hp, dmg);
         this.#setImage();
     }
 
@@ -90,5 +98,23 @@ export class Wallnut extends Plant {
         for (let i = 0; i < 7; i++) {
             this.img[i].src = "./images/Plants/wallnut/wallnut_" + i + ".png";
         }
+    }
+}
+
+
+class PlantBall {
+    constructor(x, y, speed, src) {
+        this.x = x;
+        this.y = y;
+        this.speed = speed;
+
+        this.img = new Image();
+        this.img.src = "./images/Plants/" + src + ".gif";
+    }
+
+    draw(ctx) {
+        ctx.beginPath();
+        ctx.drawImage(this.img, this.x, this.y);
+        ctx.closePath();
     }
 }

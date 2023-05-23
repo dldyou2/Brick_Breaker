@@ -19,6 +19,7 @@ export class stdZombie {
 
         this.slow = 1;
         this.timer_HP = 0;
+        this.timer_slow = 0;
 
         this.img = new Array();
         for (let i = 0; i < 7; i++) {
@@ -91,6 +92,7 @@ export class stdZombie {
     isEnd() {
         return this.x <= 125;
     }
+
     /*
     Author : 윤찬규
     Date : 2023-05-23
@@ -98,6 +100,28 @@ export class stdZombie {
     */
     nextFrame() {
         this.frame = (this.frame + 1) % 7;
+    }
+
+    /*
+    Author : 윤찬규
+    Date : 2023-05-23
+    Description : 피격 효과
+    */
+    slowON() {
+        this.slow = 0.5;
+        this.timer_slow = 1;
+    }
+
+    slowOFF() {
+        if(this.timer_slow == 0) return;
+        else if(this.timer_slow++ > 100) {
+            this.slow = 1;
+            this.timer_slow = 0;
+        }
+    }
+
+    knockback() {
+        this.x += 5;
     }
 }
 

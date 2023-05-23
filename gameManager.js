@@ -54,7 +54,7 @@ export class gameManager {
         for(let i = 0; i < 5; i++) {
             this.plants[i] = new Array();
             for(let j = 0; j < 9; j++) {
-                this.plants[i].push(new Plant(0, 0, 0, 0, 0));
+                this.plants[i].push(new Plant(0, 0, 0, 0));
             }
         }
         this.buyStatus = 0;
@@ -113,7 +113,7 @@ export class gameManager {
         for(let i = 0; i < 5; i++) {
             this.plants[i] = new Array();
             for(let j = 0; j < 9; j++) {
-                this.plants[i].push(new Plant(0, 0, 0, 0, 0));
+                this.plants[i].push(new Plant(0, 0, 0, 0));
             }
         }
         this.buyStatus = 0;
@@ -186,10 +186,14 @@ export class gameManager {
         this.ball.move(this.ctx);
         this.stick.move(this.ctx, this.upPressed - this.downPressed);
         for (let i = 0; i < 5; i++) {
+            this.minimumPosOfLinesIdx[i] = -1;
+            this.minimumPosOfLinesX[i] = 1600;
             for (let j = 0; j < 100; j++) {
                 if (this.zombies[i][j].hp > 0) {
                     this.zombies[i][j].move(this.ctx);
                     this.zombies[i][j].drawHP(this.ctx);
+                    this.zombies[i][j].slowOFF();
+
                     if (this.zombies[i][j].x < this.minimumPosOfLinesX[i]) {
                         this.minimumPosOfLinesX[i] = this.zombies[i][j].x;
                         this.minimumPosOfLinesIdx[i] = j;
@@ -204,6 +208,31 @@ export class gameManager {
             for(let j = 0; j < 9; j++) {
                 if(this.plants[i][j].hp > 0) {
                     this.plants[i][j].draw(this.ctx);
+                    if(this.plants[i][j].ball.length == 0) continue;
+
+                    let removeIdx = new Array();
+                    for(let k in this.plants[i][j].ball) {
+                        this.plants[i][j].ball[k].x += this.plants[i][j].ball[k].speed;
+                        this.plants[i][j].ball[k].draw(this.ctx);
+                        if(this.minimumPosOfLinesIdx[i] == -1) continue;
+                        if(this.plants[i][j].ball[k].x >= 1400) {
+                            removeIdx.push(k);
+                            continue;
+                        }
+                        if(this.plants[i][j].ball[k].x + this.plants[i][j].ball[k].img.width >= this.zombies[i][this.minimumPosOfLinesIdx[i]].x) {
+                            if(this.plants[i][j] instanceof Snowpea) {
+                                this.zombies[i][this.minimumPosOfLinesIdx[i]].slowON();
+                            }
+                            else if(this.plants[i][j] instanceof Peashooter) {
+                                this.zombies[i][this.minimumPosOfLinesIdx[i]].knockback();
+                            }
+                            removeIdx.push(k);
+                            continue;
+                        }
+                    }
+                    for(let k = removeIdx.length - 1; k >= 0; k--) {
+                        this.plants[i][j].ball.splice(removeIdx[k], 1);
+                    }
                 }
             }
         }
@@ -529,6 +558,9 @@ export class gameManager {
         }
         else if(e.key == "g") { // 골드 증가
             this.gold += 15;
+
+            // test call
+            console.log("GOLD + 15");
         }
         else if(e.key == "z") { // 좀비 제거
             for (let i = 0; i < 5; i++) {
@@ -539,11 +571,17 @@ export class gameManager {
                     }
                 }
             }
+
+            // test call
+            console.log("KILL ALL ZOMBIES");
         }
         else if(e.key == "r") { // 공 강제 리스폰
             this.ball.x = -100;
             this.ball.timer = 0;
             this.ball.respawn();
+
+            // test call
+            console.log("STRONG RESPAWN");
         }
         else if(e.key == "f") {
             for (let i = 0; i < 5; i++) {
@@ -561,6 +599,9 @@ export class gameManager {
                     }
                 }
             }
+
+            // test call
+            console.log("ZOMBIE SPEED UP");
         }
     }
     keyUpHandler(e) {
@@ -608,13 +649,13 @@ export class gameManager {
             console.log(this.addPlantX + " " + this.addPlantY);
             if(this.plants[this.addPlantY][this.addPlantX].hp > 0) return;
             if(this.buyStatus == plantsName[0]) {
-                this.plants[this.addPlantY][this.addPlantX] = new Peashooter(this.addPlantX * 83 + 291.5, this.addPlantY * 100 + 107.5, 5, 0, 1);
+                this.plants[this.addPlantY][this.addPlantX] = new Peashooter(this.addPlantX * 83 + 291.5, this.addPlantY * 100 + 107.5, 5, 0);
             }
             else if(this.buyStatus == plantsName[1]) {
-                this.plants[this.addPlantY][this.addPlantX] = new Snowpea(this.addPlantX * 83 + 291.5, this.addPlantY * 100 + 107.5, 10, 0, 0.5);
+                this.plants[this.addPlantY][this.addPlantX] = new Snowpea(this.addPlantX * 83 + 291.5, this.addPlantY * 100 + 107.5, 10, 0);
             }
             else if(this.buyStatus == plantsName[2]) {
-                this.plants[this.addPlantY][this.addPlantX] = new Wallnut(this.addPlantX * 83 + 291.5, this.addPlantY * 100 + 107.5, 5, 0, 1);
+                this.plants[this.addPlantY][this.addPlantX] = new Wallnut(this.addPlantX * 83 + 291.5, this.addPlantY * 100 + 107.5, 5, 0);
             }
             this.buyStatus = 0;
             document.removeEventListener("mousemove", this.buyEvent);
@@ -625,7 +666,7 @@ export class gameManager {
     mouseMoved(e) {
         let x = e.pageX - $("#myCanvas").offset().left;
         let y = e.pageY - $("#myCanvas").offset().top;
-        console.log(x, y);
+        
         this.addingPlant(x, y);
     }
     /*
