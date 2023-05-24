@@ -19,19 +19,39 @@ export class stdZombie {
 
         this.slow = 1;
         this.timer_HP = 0;
+        this.timer_slow = 0;
+
+        this.img = new Array();
+        for (let i = 0; i < 7; i++) {
+            this.img.push(new Image());
+        }
+
+        this.img_atk = new Array();
+        for (let i = 0; i < 7; i++) {
+            this.img_atk.push(new Image());
+        }
+        this.shadow = new Image();
+        this.shadow.src = "./images/Zombie/zombieshadow.png";
+        this.frame = 0;
     }
     /*
     Author : 윤찬규
     Date : 2023-05-13
     Description : 좀비(벽돌)를 움직이는 함수입니다.
 
-    식물이 있다면 움직이지 않고 move()가 아닌 attack()을 실행합니다.
+    식물이 있다면 움직이지 않고 move()가 아닌 attack을 실행합니다.
     */
     move(ctx) {
         this.x -= this.speed * this.slow;
         this.draw(ctx);
     }
 
+    attack(ctx) {
+        this.drawAtk(ctx);
+        if(this.frame == 6) 
+            return 1;
+        return 0;
+    }
     /*
     Author : 윤찬규 
     Date : 2023-05-13
@@ -41,9 +61,19 @@ export class stdZombie {
     */
     draw(ctx) {
         ctx.beginPath();
-        ctx.rect(this.x - this.width / 2, this.y - this.height / 2, this.width, this.height);
-        ctx.fillStyle = this.color;
-        ctx.fill();
+        const fixW = Math.floor(this.img[this.frame].width * 0.8);
+        const fixH = Math.floor(this.img[this.frame].height * 0.8);
+        ctx.drawImage(this.shadow, this.x, this.y + 30);
+        ctx.drawImage(this.img[this.frame], this.x - fixW / 2, this.y - fixH / 2, fixW, fixH);
+        ctx.closePath();
+    }
+
+    drawAtk(ctx) {
+        ctx.beginPath();
+        const fixW = Math.floor(this.img_atk[this.frame].width * 0.8);
+        const fixH = Math.floor(this.img_atk[this.frame].height * 0.8);
+        ctx.drawImage(this.shadow, this.x, this.y + 30);
+        ctx.drawImage(this.img_atk[this.frame], this.x - fixW / 2, this.y - fixH / 2, fixW, fixH);
         ctx.closePath();
     }
 
@@ -82,18 +112,64 @@ export class stdZombie {
     isEnd() {
         return this.x <= 125;
     }
+
+    /*
+    Author : 윤찬규
+    Date : 2023-05-23
+    Description : gif 프레임을 넘깁니다.
+    */
+    nextFrame() {
+        this.frame = (this.frame + 1) % 7;
+    }
+
+    /*
+    Author : 윤찬규
+    Date : 2023-05-23
+    Description : 피격 효과
+    */
+    slowON() {
+        this.slow = 0.5;
+        this.timer_slow = 1;
+    }
+
+    slowOFF() {
+        if(this.timer_slow == 0) return;
+        else if(this.timer_slow++ > 500) {
+            this.slow = 1;
+            this.timer_slow = 0;
+        }
+    }
+
+    knockback() {
+        this.x += 2;
+    }
 }
 
 export class Zombie extends stdZombie {
     constructor(x, y, width, height, speed, hp, dmg) {
         super(x, y, width, height, speed, hp, dmg);
+        this.#setImage();
+    }
+
+    #setImage() {
+        for (let i = 0; i < 7; i++) {
+            this.img[i].src = "./images/Zombie/Zombie/Zombie_" + i + ".png";
+            this.img_atk[i].src = "./images/Zombie/ZombieAttack/ZombieAttack_" + i + ".png";
+        }
     }
 }
 
 export class ConeheadZombie extends stdZombie {
     constructor(x, y, width, height, speed, hp, dmg) {
         super(x, y, width, height, speed, hp, dmg);
-        this.color = "blue";
+        this.#setImage();
+    }
+
+    #setImage() {
+        for (let i = 0; i < 7; i++) {
+            this.img[i].src = "./images/Zombie/ConeheadZombie/ConeheadZombie_" + i + ".png";
+            this.img_atk[i].src = "./images/Zombie/ZombieAttack/ZombieAttack_" + i + ".png";
+        }
     }
 }
 
@@ -101,7 +177,14 @@ export class ConeheadZombie extends stdZombie {
 export class BucketheadZombie extends stdZombie {
     constructor(x, y, width, height, speed, hp, dmg) {
         super(x, y, width, height, speed, hp, dmg);
-        this.color = "red";
+        this.#setImage();
+    }
+
+    #setImage() {
+        for (let i = 0; i < 7; i++) {
+            this.img[i].src = "./images/Zombie/BucketheadZombie/BucketheadZombie_" + i + ".png";
+            this.img_atk[i].src = "./images/Zombie/ZombieAttack/ZombieAttack_" + i + ".png";
+        }
     }
 }
 
