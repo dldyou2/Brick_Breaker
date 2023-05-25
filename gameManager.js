@@ -762,8 +762,11 @@ export class gameManager {
     */
     showGameOverScreen() {
         $("#game-display").append(this.gameOverScreen);
+        let gameOverSound = new Audio("./sounds/In-Game/gameover.mp3");
+        gameOverSound.volume = 0.2;
+        gameOverSound.play();
         // 출력 애니메이션
-        $(this.gameOverScreen).animate({top : "180px", opacity : "0.5"}, 2000);
+        $(this.gameOverScreen).animate({top : "180px", opacity : "0.5"}, 1300);
         $(this.gameOverScreen).animate({top : "150px", opacity : "1.0"}, 400);
     };
 
@@ -773,16 +776,16 @@ export class gameManager {
     Description : 게임 실패 화면을 초기화하는 함수
     */
     initGameOverScreen() {
-        this.gameOverScreen = document.createElement("div");
+        this.gameOverScreen = $("<div/>");
         $(this.gameOverScreen).addClass("gameOverScreen");
 
-        let gameOverImage = document.createElement("img");
+        let gameOverImage = $("<img/>");
         $(gameOverImage).attr("id", "gameOverImage");
 
-        let buttonDiv = document.createElement("div");
+        let buttonDiv = $("<div/>");
         $(buttonDiv).attr("id", "buttonDiv");
 
-        let retry = document.createElement("img");
+        let retry = $("<img/>");
         $(retry).attr("id", "retry-button");
         $(retry).on("click", function () {
             $("#game-display .gameOverScreen").remove();
@@ -790,13 +793,21 @@ export class gameManager {
             this.removeEventListeners();
             this.init(this.difficulty);
         }.bind(this));
+        $(retry).mouseover(function () {
+            let hoverSound = new Audio("./sounds/In-Game/button_hover.mp3");
+            hoverSound.play();
+        });
 
-        let exit = document.createElement("img");
+        let exit = $("<img/>");
         $(exit).attr("id", "exit-button");
         $(exit).on("click", function () {
             $("#game-display .gameOverScreen").remove();
             // 메인 화면
              
+        });
+        $(exit).mouseover(function () {
+            let hoverSound = new Audio("./sounds/In-Game/button_hover.mp3");
+            hoverSound.play();
         });
 
         $(this.gameOverScreen).append(gameOverImage);
@@ -822,16 +833,16 @@ export class gameManager {
     Description : 게임 클리어 화면을 초기화하는 함수
     */
     initGameClearScreen() {
-        this.gameClearScreen = document.createElement("div");
+        this.gameClearScreen = $("<div/>");
         $(this.gameClearScreen).addClass("gameClearScreen");
 
-        let gameClearImage = document.createElement("img");
+        let gameClearImage = $("<img/>");
         $(gameClearImage).attr("id", "gameClearImage");
 
-        let buttonDiv = document.createElement("div");
+        let buttonDiv = $("<div/>");
         $(buttonDiv).attr("id", "buttonDiv");
 
-        let next = document.createElement("img");
+        let next = $("<img/>");
         $(next).attr("id", "next-button");
         $(next).on("click", function () {
             $("#game-display .gameClearScreen").remove();
@@ -839,13 +850,21 @@ export class gameManager {
             this.removeEventListeners();
             this.init(++this.difficulty);
         }.bind(this));
+        $(next).mouseover(function () {
+            let hoverSound = new Audio("./sounds/In-Game/button_hover.mp3");
+            hoverSound.play();
+        });
 
-        let exit = document.createElement("img");
+        let exit = $("<img/>");
         $(exit).attr("id", "exit-button");
         $(exit).on("click", function () {
             $("#game-display .gameClearScreen").remove();
             // 메인 화면
              
+        });
+        $(exit).mouseover(function () {
+            let hoverSound = new Audio("./sounds/In-Game/button_hover.mp3");
+            hoverSound.play();
         });
 
         $(this.gameClearScreen).append(gameClearImage);

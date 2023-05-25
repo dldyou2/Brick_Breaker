@@ -32,7 +32,7 @@ class App {
     inGame(difficulty) {
         this.gm = new gameManager(this.ctx, difficulty);
         this.gm.startGame();
-        
+
         // test call
         console.log("inGame complete")
     }

@@ -99,7 +99,8 @@
 }
 
 #gameClearImage {
-    content: url("./images/In-Game/menu/stage_clear.png");
+    width: 310px;
+    content: url("./images/In-Game/menu/stageclear.png");
 }
 
 #buttonDiv {
@@ -119,8 +120,12 @@
 }
 
 #next-button {
-    content: url("./images/In-Game/menu/next.png");
+    content: url("./images/In-Game/menu/nextstage.png");
     margin-right: 30px;
+}
+
+#next-button:hover {
+    content: url("./images/In-Game/menu/nextstage-hover.png");
 }
 
 #exit-button {
