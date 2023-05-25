@@ -30,6 +30,17 @@ export class stdZombie {
         for (let i = 0; i < 7; i++) {
             this.img_atk.push(new Image());
         }
+
+        this.img_slow = new Array();
+        for (let i = 0; i < 7; i++) {
+            this.img_slow.push(new Image());
+        }
+
+        this.img_atk_slow = new Array();
+        for (let i = 0; i < 7; i++) {
+            this.img_atk_slow.push(new Image());
+        }
+
         this.shadow = new Image();
         this.shadow.src = "./images/Zombie/zombieshadow.png";
         this.frame = 0;
@@ -64,7 +75,7 @@ export class stdZombie {
         const fixW = Math.floor(this.img[this.frame].width * 0.8);
         const fixH = Math.floor(this.img[this.frame].height * 0.8);
         ctx.drawImage(this.shadow, this.x, this.y + 30);
-        ctx.drawImage(this.img[this.frame], this.x - fixW / 2, this.y - fixH / 2, fixW, fixH);
+        ctx.drawImage(this.slow == 1 ? this.img[this.frame] : this.img_slow[this.frame], this.x - fixW / 2, this.y - fixH / 2, fixW, fixH);
         ctx.closePath();
     }
 
@@ -73,7 +84,7 @@ export class stdZombie {
         const fixW = Math.floor(this.img_atk[this.frame].width * 0.8);
         const fixH = Math.floor(this.img_atk[this.frame].height * 0.8);
         ctx.drawImage(this.shadow, this.x, this.y + 30);
-        ctx.drawImage(this.img_atk[this.frame], this.x - fixW / 2, this.y - fixH / 2, fixW, fixH);
+        ctx.drawImage(this.slow == 1 ? this.img_atk[this.frame] : this.img_atk_slow[this.frame], this.x - fixW / 2, this.y - fixH / 2, fixW, fixH);
         ctx.closePath();
     }
 
@@ -149,6 +160,7 @@ export class Zombie extends stdZombie {
     constructor(x, y, width, height, speed, hp, dmg) {
         super(x, y, width, height, speed, hp, dmg);
         this.#setImage();
+        this.#setSlowFilter();
     }
 
     #setImage() {
@@ -157,18 +169,33 @@ export class Zombie extends stdZombie {
             this.img_atk[i].src = "./images/Zombie/ZombieAttack/ZombieAttack_" + i + ".png";
         }
     }
+
+    #setSlowFilter() {
+        for (let i = 0; i < 7; i++) {
+            this.img_slow[i] = this.img[i];
+            this.img_atk_slow[i] = this.img_atk[i];
+        }
+    }
 }
 
 export class ConeheadZombie extends stdZombie {
     constructor(x, y, width, height, speed, hp, dmg) {
         super(x, y, width, height, speed, hp, dmg);
         this.#setImage();
+        this.#setSlowFilter();
     }
 
     #setImage() {
         for (let i = 0; i < 7; i++) {
             this.img[i].src = "./images/Zombie/ConeheadZombie/ConeheadZombie_" + i + ".png";
             this.img_atk[i].src = "./images/Zombie/ConeheadZombieAttack/ConeheadZombieAttack_" + i + ".png";
+        }
+    }
+
+    #setSlowFilter() {
+        for (let i = 0; i < 7; i++) {
+            this.img_slow[i] = this.img[i];
+            this.img_atk_slow[i] = this.img_atk[i];
         }
     }
 }
@@ -178,12 +205,20 @@ export class BucketheadZombie extends stdZombie {
     constructor(x, y, width, height, speed, hp, dmg) {
         super(x, y, width, height, speed, hp, dmg);
         this.#setImage();
+        this.#setSlowFilter();
     }
 
     #setImage() {
         for (let i = 0; i < 7; i++) {
             this.img[i].src = "./images/Zombie/BucketheadZombie/BucketheadZombie_" + i + ".png";
-            this.img_atk[i].src = "./images/Zombie/BucketheadZombieAttack/BuchketheadZombieAttack_" + i + ".png";
+            this.img_atk[i].src = "./images/Zombie/BucketheadZombieAttack/BucketheadZombieAttack_" + i + ".png";
+        }
+    }
+
+    #setSlowFilter() {
+        for (let i = 0; i < 7; i++) {
+            this.img_slow[i] = this.img[i];
+            this.img_atk_slow[i] = this.img_atk[i];
         }
     }
 }

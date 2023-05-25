@@ -10,6 +10,7 @@
 }
 
 #game-screen {
+    position: relative;
     width: 1400px;
     height: 600px;
     margin: 0 auto;
@@ -53,6 +54,16 @@
     font-weight: bold;
     top: 70px;
     left: 26px;
+}
+
+#stage {
+    font-weight: bold;
+    font-size: 25px;
+    color: white;
+    z-index: 1;
+    position: absolute;
+    padding: 10px;
+    bottom: 0; right: 0;
 }
 
 .gameOverScreen {

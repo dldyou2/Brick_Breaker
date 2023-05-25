@@ -131,6 +131,7 @@ export class gameManager {
         this.addEventListeners();
         this.initGameOverScreen();
         this.initGameClearScreen();
+        this.printStage();
         this.checkPlantBar();
         this.animate();
 
@@ -372,6 +373,16 @@ export class gameManager {
         // 골드 관리
         $("#gold").text(this.gold.toString().padStart(5, '0'));
     }
+
+    /*
+    Author : 윤찬규
+    Date : 2023-05-25
+    Description : 스테이지 정보를 출력하는 함수입니다.
+    */
+    printStage() {
+        const str = "STAGE " + this.difficulty + " [" + this.curWave + " / " + this.maxWave + "]"
+        $("#stage").text(str);
+    }
     /*******************************************************************************************************/
     /*
     Author : 윤찬규
@@ -404,6 +415,7 @@ export class gameManager {
             return 1;
         }
         this.spawnEntitesLinesPerWave--;
+        this.printStage();
         // test call
         console.log("remain " + this.spawnEntitesLinesPerWave + " lines at [" + this.curWave + "/" + this.maxWave + "]");
         return 0;
@@ -575,6 +587,19 @@ export class gameManager {
         }
     }
     /*
+    Author : 
+    Date : 2023-05-25
+    Description : 게임 일시정지
+    */
+    gamePauseOn() {
+        window.cancelAnimationFrame(this.animation);
+
+    }
+    gemePauseOff() {
+        this.animate();
+    }
+
+    /*
     Author : 윤찬규
     Date : 2023-05-12
     Description : 키 이벤트
@@ -671,6 +696,12 @@ export class gameManager {
                     }
                 }
             }
+        }
+        else if(e.key == "p") { 
+            // pause
+            console.log("pause");
+            
+            this.gamePauseOn();
         }
     }
     /* 
