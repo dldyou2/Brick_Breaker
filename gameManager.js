@@ -178,7 +178,7 @@ export class gameManager {
     Author : 윤찬규
     Date : 2023-05-14
     Description : 움직임과 관련된 함수입니다.
-    */
+    */ 
     move() {
         const interval = [330, 405, 495, 575, 660, 735, 815, 885, 980];
         for(let i = 0; i < 5; i++) {
