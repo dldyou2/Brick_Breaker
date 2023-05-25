@@ -168,7 +168,7 @@ export class ConeheadZombie extends stdZombie {
     #setImage() {
         for (let i = 0; i < 7; i++) {
             this.img[i].src = "./images/Zombie/ConeheadZombie/ConeheadZombie_" + i + ".png";
-            this.img_atk[i].src = "./images/Zombie/ZombieAttack/ZombieAttack_" + i + ".png";
+            this.img_atk[i].src = "./images/Zombie/ConeheadZombieAttack/ConeheadZombieAttack_" + i + ".png";
         }
     }
 }
@@ -183,7 +183,7 @@ export class BucketheadZombie extends stdZombie {
     #setImage() {
         for (let i = 0; i < 7; i++) {
             this.img[i].src = "./images/Zombie/BucketheadZombie/BucketheadZombie_" + i + ".png";
-            this.img_atk[i].src = "./images/Zombie/ZombieAttack/ZombieAttack_" + i + ".png";
+            this.img_atk[i].src = "./images/Zombie/BucketheadZombieAttack/BuchketheadZombieAttack_" + i + ".png";
         }
     }
 }
