@@ -42,7 +42,7 @@ export class Ball {
         } 
         else if(this.y - this.r <= 0 || 
             this.y + this.r >= 600) {
-            this.angle = 360 - this.angle;
+            this.conflictTopBottom();
         } 
         this.nextPos();
         this.draw(ctx);

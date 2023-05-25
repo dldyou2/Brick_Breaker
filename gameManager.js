@@ -15,7 +15,81 @@ export class gameManager {
         // test call
         console.log("difficulty[" + difficulty + "] gameManager loaded");
         this.ctx = ctx;
+        this.difficulty;
+
+        this.maxWave;
+        this.curWave;
+        this.spawnTime;
+        this.timer;
         
+        // player
+        this.ball;
+        this.stick;
+
+        this.gold;
+        // zombie
+        this.spawnEntitesLinesPerWave;
+        this.minimumSpawnEntitiesPerLine;
+        this.maximumSpawnEntitiesPerLine;
+        this.spawnPos;
+        this.zombies;
+
+        // plant
+        this.plantPrice;
+        this.plants;
+        this.buyStatus;
+        this.buyEvent;
+        this.addPlantX, this.addPlantY;
+
+        this.animation;
+        this.upPressed;
+        this.downPressed; // 키가 눌렸는지
+        this.gameOverScreen;
+        this.gamestate; // 0: normal / 1: wave clear / 99: difficulty clear
+
+        this.event_keydown;
+        this.event_keyup;
+        this.event_click;
+        this.frame = 0;
+
+        this.init(difficulty);
+    }
+
+    /*
+    Author : 윤찬규
+    Date : 2023-05-25
+    Description : bgm 관련 함수입니다.
+    */
+    bgmChange() {
+        const fileName = this.bgm.src.split("/");
+        const theme = fileName[fileName.length - 1] == "Day_Stage.mp3" ? "Night" : "Day";
+        console.log(theme);
+        this.bgm.src = "./sounds/BGM/" + theme + "_Stage.mp3";
+        this.bgm.load();
+        this.bgmPlay();
+    }
+
+    bgmPlay() {
+        this.bgm.play();
+    }
+
+    bgmPause() {
+        this.bgm.pause();
+    }
+    /*
+    Author : 윤찬규
+    Date : 2023-05-25
+    Description : background 관련 함수입니다.
+    */
+    bgdChange() {
+
+    }
+
+    init(difficulty) {
+        if(difficulty > 3) return;
+        const stageStart = new Audio("./sounds/In-Game/stage_start.mp3");
+        stageStart.play();
+
         this.difficulty = difficulty;
         this.maxWave = 3;
         this.curWave = 1;
@@ -64,70 +138,18 @@ export class gameManager {
         this.event_keydown = this.keyDownHandler.bind(this);
         this.event_keyup = this.keyUpHandler.bind(this);
         this.event_click = this.mouseClicked.bind(this);
-        this.frame = 0;
-
-    }
-
-    bgmPlay(fileName) {
-        const audio = document.getElementById("bgm");
-        audio.src = "./sounds/BGM/" + fileName;
-        audio.muted = true;
-        audio.load();
-        audio.muted = false;
-    }
-
-    init(difficulty) {
-        if(difficulty > 3) return;
-        this.difficulty = difficulty;
-        this.maxWave = 3;
-        this.curWave = 1;
-        this.spawnTime = 350 - 50 * difficulty;
-        this.timer = 200;
         
-        this.ball = new Ball(300, 300, 15, 0, 10, 3);
-        this.stick = new Stick(220, 300, 20, 125, 10);
-
-        this.gold = 500;
-        // zombie
-        this.spawnEntitesLinesPerWave = this.difficulty * this.curWave;
-        this.minimumSpawnEntitiesPerLine = this.difficulty;
-        this.maximumSpawnEntitiesPerLine = Math.min(this.difficulty * 2, 5);
-        this.spawnPos = [0, 0, 0, 0, 0];
-
-        this.zombies = new Array(5);
-        for(let i = 0; i < 5; i++) {
-            this.zombies[i] = new Array();
-        }
-        this.zombiePos;
-
-        // plant
-        this.plantPrice = {
-            peashooter:100,
-            snowpea:175,
-            wallnut:50
-        }
-        this.plants = new Array(5);
-        for(let i = 0; i < 5; i++) {
-            this.plants[i] = new Array();
-            for(let j = 0; j < 9; j++) {
-                this.plants[i].push(new Plant(0, 0, 0, 0));
-            }
-        }
-        this.buyStatus = 0;
-        this.buyEvent = null;
-        this.addPlantX = 0, this.addPlantY = 0;
-
-        this.animation = null;
-        this.upPressed = false;
-        this.downPressed = false; // 키가 눌렸는지
-        this.gameOverScreen = null;
-        this.gamestate = 0; // 0: normal / 1: wave clear / 99: difficulty clear
-
         this.frame = 0;
+
+        this.bgm = new Audio("./sounds/BGM/Day_Stage.mp3");
+        this.bgm.loop = true;
+
         this.startGame();
     }
 
     startGame() {
+        this.bgmPlay();
+        this.removeEventListeners();
         this.addEventListeners();
         this.initGameOverScreen();
         this.initGameClearScreen();
@@ -152,6 +174,7 @@ export class gameManager {
         this.updatePlantBar();
         let gameEnd = this.move();
         if(gameEnd) {
+            this.bgmPause();
             window.cancelAnimationFrame(this.animation);
             this.showGameOverScreen();
         }
@@ -178,7 +201,7 @@ export class gameManager {
     Author : 윤찬규
     Date : 2023-05-14
     Description : 움직임과 관련된 함수입니다.
-    */
+    */ 
     move() {
         const interval = [330, 405, 495, 575, 660, 735, 815, 885, 980];
         for(let i = 0; i < 5; i++) {
@@ -206,7 +229,7 @@ export class gameManager {
 
                             if(atkPosE >= zPosS && atkPosS <= zPosE) {
                                 if(this.plants[i][j].dmg > 0) {
-                                    this.zombies[i][l].hp -= this.plants[i][j].dmg;
+                                    this.zombies[i][l].damaged(this.plants[i][j].dmg);
                                     this.zombies[i][l].timer_HP = 100; // 충돌 시 체력 바
                                     if(this.zombies[i][l].hp <= 0) {
                                         removeZIdx.push(l);
@@ -403,11 +426,17 @@ export class gameManager {
             // wave clear
             if(++this.curWave > this.maxWave)  {
                 // difficulty clear
+                this.bgmPause();
                 window.cancelAnimationFrame(this.animation);
                 this.showGameClearScreen();
                 // test call
                 console.log("difficulty clear");
                 return 99;
+            }
+            else if(this.curWave == this.maxWave) {
+                // last wave!!
+                const finalWave = new Audio("./sounds/In-Game/final_wave.mp3");
+                finalWave.play();
             }
             // test call
             console.log("wave clear");
@@ -560,7 +589,7 @@ export class gameManager {
 
                     // 충돌 시 데미지
                     if(isConflict) {
-                        this.zombies[i][j].hp -= this.ball.dmg;
+                        this.zombies[i][j].damaged(this.ball.dmg);
                         this.zombies[i][j].timer_HP = 100; // 충돌 시 체력 바
                         if(this.zombies[i][j].hp <= 0) {
                             removeIdx.push(j);
@@ -592,10 +621,12 @@ export class gameManager {
     Description : 게임 일시정지
     */
     gamePauseOn() {
+        this.bgmPause();
         window.cancelAnimationFrame(this.animation);
 
     }
     gemePauseOff() {
+        this.bgmPlay();
         this.animate();
     }
 
@@ -763,7 +794,6 @@ export class gameManager {
     showGameOverScreen() {
         $("#game-display").append(this.gameOverScreen);
         let gameOverSound = new Audio("./sounds/In-Game/gameover.mp3");
-        gameOverSound.volume = 0.2;
         gameOverSound.play();
         // 출력 애니메이션
         $(this.gameOverScreen).animate({top : "180px", opacity : "0.5"}, 1300);
