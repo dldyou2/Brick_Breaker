@@ -5,11 +5,10 @@ class App {
         console.log("App Loaded");
         this.canvas = document.getElementById("myCanvas");
         this.ctx = this.canvas.getContext("2d");
-
-
+        
         this.init();
         this.gm = null;
-        this.inGame(3);
+        this.inGame(1);
     }
     /*
     Author : 윤찬규
@@ -37,7 +36,6 @@ class App {
         // test call
         console.log("inGame complete")
     }
-
 }
 
 window.onload = () => {
