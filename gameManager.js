@@ -25,7 +25,7 @@ export class gameManager {
         this.ball = new Ball(300, 300, 15, 0, 10, 3);
         this.stick = new Stick(220, 300, 20, 125, 10);
 
-        this.gold = 200;
+        this.gold = 500;
         // zombie
         this.spawnEntitesLinesPerWave = this.difficulty * this.curWave;
         this.minimumSpawnEntitiesPerLine = this.difficulty;
@@ -65,6 +65,15 @@ export class gameManager {
         this.event_keyup = this.keyUpHandler.bind(this);
         this.event_click = this.mouseClicked.bind(this);
         this.frame = 0;
+
+    }
+
+    bgmPlay(fileName) {
+        const audio = document.getElementById("bgm");
+        audio.src = "./sounds/BGM/" + fileName;
+        audio.muted = true;
+        audio.load();
+        audio.muted = false;
     }
 
     init(difficulty) {
@@ -78,7 +87,7 @@ export class gameManager {
         this.ball = new Ball(300, 300, 15, 0, 10, 3);
         this.stick = new Stick(220, 300, 20, 125, 10);
 
-        this.gold = 200;
+        this.gold = 500;
         // zombie
         this.spawnEntitesLinesPerWave = this.difficulty * this.curWave;
         this.minimumSpawnEntitiesPerLine = this.difficulty;
@@ -137,6 +146,7 @@ export class gameManager {
             // test call
             console.log("ball is out")
             this.ball.respawn();
+            this.stick.y = 300;
         }
         this.updatePlantBar();
         let gameEnd = this.move();
