@@ -15,7 +15,6 @@ export class stdZombie {
         this.hp = hp;
         this.fullhp = hp;
         this.dmg = dmg;
-        this.color = "white";
 
         this.slow = 1;
         this.timer_HP = 0;
@@ -43,6 +42,8 @@ export class stdZombie {
 
         this.shadow = new Image();
         this.shadow.src = "./images/Zombie/zombieshadow.png";
+
+        this.dmgAudio = new Audio();
         this.frame = 0;
     }
     /*
@@ -138,6 +139,11 @@ export class stdZombie {
     Date : 2023-05-23
     Description : 피격 효과
     */
+    damaged(dmg) {
+        this.hp -= dmg;
+        this.damagedSound();
+    }
+
     slowON() {
         this.slow = 0.5;
         this.timer_slow = 1;
@@ -154,6 +160,10 @@ export class stdZombie {
     knockback() {
         this.x += 2;
     }
+
+    damagedSound() {
+        this.dmgAudio.play();
+    }
 }
 
 export class Zombie extends stdZombie {
@@ -161,6 +171,8 @@ export class Zombie extends stdZombie {
         super(x, y, width, height, speed, hp, dmg);
         this.#setImage();
         this.#setSlowFilter();
+        this.dmgAudio = new Audio("./sounds/Zombie/zombie_hit.mp3");
+        this.dmgAudio.volume = 0.1;
     }
 
     #setImage() {
@@ -183,6 +195,8 @@ export class ConeheadZombie extends stdZombie {
         super(x, y, width, height, speed, hp, dmg);
         this.#setImage();
         this.#setSlowFilter();
+        this.dmgAudio = new Audio("./sounds/Zombie/zombie_hit.mp3");
+        this.dmgAudio.volume = 0.1;
     }
 
     #setImage() {
@@ -206,6 +220,8 @@ export class BucketheadZombie extends stdZombie {
         super(x, y, width, height, speed, hp, dmg);
         this.#setImage();
         this.#setSlowFilter();
+        this.dmgAudio = new Audio("./sounds/Zombie/bucket_hit1.mp3");
+        this.dmgAudio.volume = 0.1;
     }
 
     #setImage() {
