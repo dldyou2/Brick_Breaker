@@ -1,0 +1,12 @@
+Help for Plants and Zombies Game
+
+When the Zombies show up, just sit
+there and don't do anything. you
+win the game when the Zombies get 
+to your house
+
+도움말
+
+좀비가 나타나면 아무걷또 하지말고 안자이쓰세요
+
+좀비가 당시네 집에 드러가면 승리할수 이써요!
