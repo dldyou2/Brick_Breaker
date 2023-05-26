@@ -184,8 +184,8 @@ export class Zombie extends stdZombie {
 
     #setSlowFilter() {
         for (let i = 0; i < 7; i++) {
-            this.img_slow[i] = this.img[i];
-            this.img_atk_slow[i] = this.img_atk[i];
+            this.img_slow[i].src = "./images/Zombie/Zombie_freez/Zombie_" + i + ".png";
+            this.img_atk_slow[i].src = "./images/Zombie/ZombieAttack_freez/ZombieAttack_" + i + ".png";
         }
     }
 }
@@ -208,8 +208,8 @@ export class ConeheadZombie extends stdZombie {
 
     #setSlowFilter() {
         for (let i = 0; i < 7; i++) {
-            this.img_slow[i] = this.img[i];
-            this.img_atk_slow[i] = this.img_atk[i];
+            this.img_slow[i].src = "./images/Zombie/ConeheadZombie_freez/ConeheadZombie_" + i + ".png";
+            this.img_atk_slow[i].src = "./images/Zombie/ConeheadZombieAttack_freez/ConeheadZombieAttack_" + i + ".png";
         }
     }
 }
@@ -233,8 +233,8 @@ export class BucketheadZombie extends stdZombie {
 
     #setSlowFilter() {
         for (let i = 0; i < 7; i++) {
-            this.img_slow[i] = this.img[i];
-            this.img_atk_slow[i] = this.img_atk[i];
+            this.img_slow[i].src = "./images/Zombie/BucketheadZombie_freez/BucketheadZombie_" + i + ".png";
+            this.img_atk_slow[i].src = "./images/Zombie/BucketheadZombieAttack_freez/BucketheadZombieAttack_" + i + ".png";
         }
     }
 }
