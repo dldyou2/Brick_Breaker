@@ -853,6 +853,9 @@ export class gameManager {
     */
     showGameClearScreen() {
         $("#game-display").append(this.gameClearScreen);
+        if(this.difficulty > 3) {
+            $("#next-button").remove();
+        }
         // 출력 애니메이션
         $(this.gameClearScreen).hide().fadeIn(2000);
     };
