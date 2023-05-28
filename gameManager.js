@@ -203,7 +203,7 @@ export class gameManager {
     Description : 움직임과 관련된 함수입니다.
     */ 
     move() {
-        const interval = [330, 405, 495, 575, 660, 735, 815, 885, 980];
+        let interval = [330, 405, 495, 575, 660, 735, 815, 885, 980];
         for(let i = 0; i < 5; i++) {
             for(let j = 0; j < 9; j++) {
                 if(this.plants[i][j].hp > 0) {
@@ -364,7 +364,7 @@ export class gameManager {
             this.addPlantX = tx;
             this.addPlantY = ty;
 
-            this.ctx.drawImage(img, tx * 83 + 291.5 - img.width / 2, ty * 100 + 107.5 - img.height / 2);
+            this.ctx.drawImage(img, tx * 83 + 291.5 - img.width / 2, ty * 100 + 127.5 - img.height / 2);
         }
         else {
             this.ctx.drawImage(img, x - img.width / 2, y - img.height / 2);
@@ -735,6 +735,13 @@ export class gameManager {
             this.gamePauseOn();
         }
     }
+
+    resizeX(x) {
+        return x * 1400 / window.innerWidth;
+    }
+    resizeY(y) {
+        return y * 600 / window.innerHeight; 
+    }
     /* 
     Author : 윤찬규
     Date : 2023-05-19
@@ -742,20 +749,22 @@ export class gameManager {
     */
     mouseClicked(e) {
         const plantsName = ["peashooter", "snowpea", "wallnut"];
-        let x = e.pageX - $("#myCanvas").offset().left;
-        let y = e.pageY - $("#myCanvas").offset().top;
+        let x = this.resizeX(e.pageX - $("#myCanvas").offset().left);
+        let y = this.resizeY(e.pageY - $("#myCanvas").offset().top);
         console.log("x: " + x + " y: " + y);
         if(this.buyStatus != 0 && x >= 250 && x <= 1000 && y >= 75 && y <= 575) {
             console.log(this.addPlantX + " " + this.addPlantY);
             if(this.plants[this.addPlantY][this.addPlantX].hp > 0) return;
+            const px = this.addPlantX * 83 + 291.5;
+            const py = this.addPlantY * 100 + 127.5;
             if(this.buyStatus == plantsName[0]) {
-                this.plants[this.addPlantY][this.addPlantX] = new Peashooter(this.addPlantX * 83 + 291.5, this.addPlantY * 100 + 107.5, 20, 0.05);
+                this.plants[this.addPlantY][this.addPlantX] = new Peashooter(px, py, 20, 0.05);
             }
             else if(this.buyStatus == plantsName[1]) {
-                this.plants[this.addPlantY][this.addPlantX] = new Snowpea(this.addPlantX * 83 + 291.5, this.addPlantY * 100 + 107.5, 30, 0.1);
+                this.plants[this.addPlantY][this.addPlantX] = new Snowpea(px, py, 30, 0.1);
             }
             else if(this.buyStatus == plantsName[2]) {
-                this.plants[this.addPlantY][this.addPlantX] = new Wallnut(this.addPlantX * 83 + 291.5, this.addPlantY * 100 + 107.5, 100, 0);
+                this.plants[this.addPlantY][this.addPlantX] = new Wallnut(px, py, 100, 0);
             }
             this.buyStatus = 0;
             document.removeEventListener("mousemove", this.buyEvent);
@@ -764,9 +773,8 @@ export class gameManager {
         }
     }
     mouseMoved(e) {
-        let x = e.pageX - $("#myCanvas").offset().left;
-        let y = e.pageY - $("#myCanvas").offset().top;
-        
+        let x = this.resizeX(e.pageX - $("#myCanvas").offset().left);
+        let y = this.resizeY(e.pageY - $("#myCanvas").offset().top);
         this.addingPlant(x, y);
     }
     /*
@@ -796,8 +804,8 @@ export class gameManager {
         let gameOverSound = new Audio("./sounds/In-Game/gameover.mp3");
         gameOverSound.play();
         // 출력 애니메이션
-        $(this.gameOverScreen).animate({top : "180px", opacity : "0.5"}, 1300);
-        $(this.gameOverScreen).animate({top : "150px", opacity : "1.0"}, 400);
+        $(this.gameOverScreen).animate({top : "30vh", opacity : "0.5"}, 1300);
+        $(this.gameOverScreen).animate({top : "25vh", opacity : "1.0"}, 400);
     };
 
     /*
