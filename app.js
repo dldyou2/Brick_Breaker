@@ -5,11 +5,8 @@ class App {
         console.log("App Loaded");
         this.canvas = document.getElementById("myCanvas");
         this.ctx = this.canvas.getContext("2d");
-        
         this.mainMenu();
-        this.init();
-        this.gm = null;
-        this.inGame(1);
+        this.status = 0;
     }
     /*
     Author : 윤찬규
@@ -21,6 +18,7 @@ class App {
     init() {
         // test call
         console.log("initialize complete");
+        $("#start-screen").hide();
     }
 
     /*
@@ -43,8 +41,59 @@ class App {
     Description : 게임 시작 화면
     */
     mainMenu() {
-        $("#start-screen").hide();
-        
+        const mainBGM = new Audio("./sounds/BGM/Main_Menu.mp3");
+        mainBGM.volume = 0.2;
+        mainBGM.loop = true;
+        mainBGM.play();
+        $("#gameStart").on("click", function() {
+            console.log("Game Start");
+            $("#start-screen #main-menu").hide();
+            $("#start-screen #difficulty").show();
+
+            $("#d1").on("click", function() {
+                this.init();
+                this.gm = null;
+                this.inGame(1);
+                mainBGM.pause();
+            }.bind(this));
+            $("#d2").on("click", function() {
+                this.init();
+                this.gm = null;
+                this.inGame(2);
+                mainBGM.pause();
+            }.bind(this));
+            $("#d3").on("click", function() {
+                this.init();
+                this.gm = null;
+                this.inGame(3);
+                mainBGM.pause();
+            }.bind(this));
+            $("#back").on("click", function() {
+                $("#main-menu").show();
+                $("#difficulty").hide();
+            }.bind(this));
+        }.bind(this));
+        $("#help").on("click", function() {
+            if(this.status != 0) 
+                return;
+            this.status = 1;
+
+            console.log("Help");
+            const help = '<img id="helpImg" src="./images/Main/help/help_v3.png">';
+            $("#main-menu").hide();
+            $("#start-screen").append(help);
+            function removeHelp() {
+                $("#helpImg").remove(); 
+                $("#main-menu").show();
+                this.status = 0;
+            }
+            setTimeout(removeHelp.bind(this), 2000);
+        }.bind(this));
+
+        $("button").on("mouseenter", function() {
+            let hoverSound = new Audio("./sounds/In-Game/button_hover.mp3");
+            hoverSound.play();
+        })
     }
 }
 
