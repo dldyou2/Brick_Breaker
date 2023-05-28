@@ -735,7 +735,11 @@ export class gameManager {
             this.gamePauseOn();
         }
     }
-
+    /*
+    Author : 윤찬규
+    Date : 2023-05-28
+    Description : resizing by monitor size
+    */
     resizeX(x) {
         return x * 1400 / window.innerWidth;
     }

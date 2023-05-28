@@ -69,7 +69,7 @@
 }
 
 .plants {
-    margin: 5px;
+    margin: 0.1vh;
     width: 8vw;
     height: 27vh;
 }
@@ -77,10 +77,10 @@
 #gold {
     position: relative;
     z-index: 1;
-    font-size: 25px;
+    font-size: 2vw;
     font-weight: bold;
-    top: 11vh;
-    left: 3vw;
+    top: 11.1vh;
+    left: 1.7vw;
 }
 
 #stage {
