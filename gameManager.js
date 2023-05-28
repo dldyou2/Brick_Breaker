@@ -52,21 +52,36 @@ export class gameManager {
         this.event_click;
         this.frame = 0;
 
+        this.bgm = new Audio("./sounds/BGM/Day_Stage.mp3");
+        this.bgm.loop = true;
+
+        this.status = 0;
+
         this.init(difficulty);
     }
 
     /*
     Author : 윤찬규
     Date : 2023-05-25
-    Description : bgm 관련 함수입니다.
+    Description : bgm / bgd / ball change 관련 함수입니다.
     */
     bgmChange() {
+        if(this.status == 1) return;
         const fileName = this.bgm.src.split("/");
         const theme = fileName[fileName.length - 1] == "Day_Stage.mp3" ? "Night" : "Day";
         console.log(theme);
         this.bgm.src = "./sounds/BGM/" + theme + "_Stage.mp3";
         this.bgm.load();
-        this.bgmPlay();
+
+        if(theme == "Day") {
+            $("#myCanvas").css("background-image", 'url("./images/In-Game/background1.jpg")');
+            this.ball.color = "red";
+        }
+        else {
+            $("#myCanvas").css("background-image", 'url("./images/In-Game/background2.jpg")');
+            this.ball.color = "white";
+        }
+        this.bgm.play();
     }
 
     bgmPlay() {
@@ -76,15 +91,6 @@ export class gameManager {
     bgmPause() {
         this.bgm.pause();
     }
-    /*
-    Author : 윤찬규
-    Date : 2023-05-25
-    Description : background 관련 함수입니다.
-    */
-    bgdChange() {
-
-    }
-
     init(difficulty) {
         if(difficulty > 3) return;
         const stageStart = new Audio("./sounds/In-Game/stage_start.mp3");
@@ -93,8 +99,8 @@ export class gameManager {
         this.difficulty = difficulty;
         this.maxWave = 3;
         this.curWave = 1;
-        this.spawnTime = 350 - 50 * difficulty;
-        this.timer = 200;
+        this.spawnTime = 500 - 50 * difficulty;
+        this.timer = 300;
         
         this.ball = new Ball(300, 300, 15, 0, 10, 3);
         this.stick = new Stick(220, 300, 20, 125, 10);
@@ -138,11 +144,13 @@ export class gameManager {
         this.event_keydown = this.keyDownHandler.bind(this);
         this.event_keyup = this.keyUpHandler.bind(this);
         this.event_click = this.mouseClicked.bind(this);
-        
+
         this.frame = 0;
 
         this.bgm = new Audio("./sounds/BGM/Day_Stage.mp3");
         this.bgm.loop = true;
+
+        this.status = 0;
 
         this.startGame();
     }
@@ -162,6 +170,7 @@ export class gameManager {
     }
 
     animate() {
+        this.status = 0;
         this.ctx.clearRect(0, 0, 1400, 600);
         this.animation = window.requestAnimationFrame(this.animate.bind(this));
         this.generateZombie();
@@ -616,21 +625,6 @@ export class gameManager {
         }
     }
     /*
-    Author : 
-    Date : 2023-05-25
-    Description : 게임 일시정지
-    */
-    gamePauseOn() {
-        this.bgmPause();
-        window.cancelAnimationFrame(this.animation);
-
-    }
-    gemePauseOff() {
-        this.bgmPlay();
-        this.animate();
-    }
-
-    /*
     Author : 윤찬규
     Date : 2023-05-12
     Description : 키 이벤트
@@ -728,14 +722,22 @@ export class gameManager {
                 }
             }
         }
-        else if(e.key == "p") { 
-            // pause
-            console.log("pause");
-            
-            this.gamePauseOn();
+        else if(e.key == "b") {
+            console.log("bgm Change");
+
+            this.bgmChange();
+        }
+        else if(e.key == "s") {
+            console.log("sound on/off");
+
+            this.bgm.volume = 1 - this.bgm.volume;
         }
     }
-
+    /*
+    Author : 윤찬규
+    Date : 2023-05-28
+    Description : resizing by monitor size
+    */
     resizeX(x) {
         return x * 1400 / window.innerWidth;
     }
@@ -800,6 +802,7 @@ export class gameManager {
     Description : 게임 실패시 게임 실패 화면을 출력하는 함수
     */
     showGameOverScreen() {
+        this.status = 1;
         $("#game-display").append(this.gameOverScreen);
         let gameOverSound = new Audio("./sounds/In-Game/gameover.mp3");
         gameOverSound.play();
@@ -814,6 +817,7 @@ export class gameManager {
     Description : 게임 실패 화면을 초기화하는 함수
     */
     initGameOverScreen() {
+        this.status = 1;
         this.gameOverScreen = $("<div/>");
         $(this.gameOverScreen).addClass("gameOverScreen");
 
@@ -841,7 +845,7 @@ export class gameManager {
         $(exit).on("click", function () {
             $("#game-display .gameOverScreen").remove();
             // 메인 화면
-             
+            location.reload();
         });
         $(exit).mouseover(function () {
             let hoverSound = new Audio("./sounds/In-Game/button_hover.mp3");
@@ -860,6 +864,7 @@ export class gameManager {
     Description : 게임 클리어시 게임 클리어 화면을 출력하는 함수
     */
     showGameClearScreen() {
+        this.status = 1;
         $("#game-display").append(this.gameClearScreen);
         if(this.difficulty > 3) {
             $("#next-button").remove();
@@ -874,6 +879,7 @@ export class gameManager {
     Description : 게임 클리어 화면을 초기화하는 함수
     */
     initGameClearScreen() {
+        this.status = 1;
         this.gameClearScreen = $("<div/>");
         $(this.gameClearScreen).addClass("gameClearScreen");
 
@@ -901,7 +907,7 @@ export class gameManager {
         $(exit).on("click", function () {
             $("#game-display .gameClearScreen").remove();
             // 메인 화면
-             
+            location.reload();
         });
         $(exit).mouseover(function () {
             let hoverSound = new Audio("./sounds/In-Game/button_hover.mp3");

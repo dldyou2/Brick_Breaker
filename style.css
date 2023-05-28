@@ -27,6 +27,27 @@
     background-repeat: no-repeat;
 }
 
+ul {
+    padding-top: 10vh;
+}
+
+button {
+    border-radius: 2vw;
+    background-color: transparent;
+    font-size: 3vw;
+    font-weight: bold;
+    margin: 1vh auto;
+    padding: 1vh 3vh;
+}
+
+#menu {
+    background-color: transparent;
+}
+
+button:hover {
+    background-color: #3f3f3f3f;
+}
+
 #game-display {
     width: 100vw;
     height: 100vh;
@@ -69,7 +90,7 @@
 }
 
 .plants {
-    margin: 5px;
+    margin: 0.1vh;
     width: 8vw;
     height: 27vh;
 }
@@ -77,10 +98,10 @@
 #gold {
     position: relative;
     z-index: 1;
-    font-size: 25px;
+    font-size: 2vw;
     font-weight: bold;
-    top: 11vh;
-    left: 3vw;
+    top: 11.1vh;
+    left: 1.7vw;
 }
 
 #stage {
