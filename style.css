@@ -1,22 +1,43 @@
 * {
     margin: 0;
     padding: 0;
+    border: 0;
+    font-size: 100%;
+    font: inherit;
+    vertical-align: baseline;
+
+    overflow: hidden;
 }
 
 .scroll::-webkit-scrollbar {
     display: none;
 }
 
+#start-screen {
+    width: 100vw;
+    height: 100vh;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin: 0 auto;
+    background-size: cover;
+    background-image: url("./images/Main/start_screen.png");
+    background-repeat: no-repeat;
+}
+
 #game-display {
-    width: 100%;
+    width: 100vw;
+    height: 100vh;
     position: relative;
     background-color: #3f3f3f3f;
 }
 
 #game-screen {
     position: relative;
-    width: 1400px;
-    height: 600px;
+    width: 100%;
+    height: 100%;
     margin: 0 auto;
 }
 
@@ -24,6 +45,7 @@
     width: 100%;
     height: 100%;
 
+    background-size: 100% 100%;
     background-color: #8f8f8f8f;
     background-image: url("./images/In-Game/background1.jpg");
     background-repeat: no-repeat;
@@ -32,8 +54,8 @@
 #bar {
     position: absolute;
     top: 0; bottom: 0;
-    width: 125px;
-    height: 600px;
+    width: 9vw;
+    height: 100vh;
 
     background-image: url("./images/In-Game/bar/bar-ex.png");
     background-size: 100% 100%;
@@ -48,8 +70,8 @@
 
 .plants {
     margin: 5px;
-    width: 110px;
-    height: 150px;
+    width: 8vw;
+    height: 27vh;
 }
 
 #gold {
@@ -57,8 +79,8 @@
     z-index: 1;
     font-size: 25px;
     font-weight: bold;
-    top: 70px;
-    left: 26px;
+    top: 11vh;
+    left: 3vw;
 }
 
 #stage {
@@ -80,6 +102,8 @@
     text-align: center;
     background : none;
     opacity: 0.0;
+
+    overflow: hidden;
 }
 
 .gameClearScreen {
@@ -87,9 +111,8 @@
     top: 0;
     left : 0;
     width: 100%;
-    height: 100%;
     text-align: center;
-    padding-top: 150px;
+    margin-top: 25vh;
     background : none;
 }
 
@@ -99,7 +122,7 @@
 }
 
 #gameClearImage {
-    width: 310px;
+    width: 28vw;
     content: url("./images/In-Game/menu/stageclear.png");
 }
 
@@ -107,7 +130,7 @@
     width: 100%;
     height: 300px;
     text-align: center;
-    padding-top: 40px;
+    margin-top: 40px;
 }
 
 #retry-button {

@@ -6,6 +6,7 @@ class App {
         this.canvas = document.getElementById("myCanvas");
         this.ctx = this.canvas.getContext("2d");
         
+        this.mainMenu();
         this.init();
         this.gm = null;
         this.inGame(1);
@@ -34,6 +35,16 @@ class App {
 
         // test call
         console.log("inGame complete")
+    }
+
+    /*
+    Author : 윤찬규
+    Date : 2023-05-28
+    Description : 게임 시작 화면
+    */
+    mainMenu() {
+        $("#start-screen").hide();
+        
     }
 }
 
