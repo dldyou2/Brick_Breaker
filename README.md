@@ -50,6 +50,15 @@ else {
 ```
 
 ## How To Play 
-> 막대 
+> KeyBoard
 
-`키` 역할
+`UP` Stick UP
+`DOWN` Stick DOWN
+`r` Ball RESPAWN
+`p` Game PAUSE
+`g` Gold CHEET (+15)
+`z` Kill CHEET (remove all zombies)
+`f` Zombie CHEET (fast zombies)
+> Mouse
+
+`LClick` Purchase and Fix Plants
