@@ -33,6 +33,7 @@ export class gameManager {
         this.maximumSpawnEntitiesPerLine;
         this.spawnPos;
         this.zombies;
+        this.zombiePrice;
 
         // plant
         this.plantPrice;
@@ -117,6 +118,7 @@ export class gameManager {
             this.zombies[i] = new Array();
         }
         this.zombiePos;
+        this.zombiePrice = [25, 40, 70];
 
         // plant
         this.plantPrice = {
@@ -221,7 +223,6 @@ export class gameManager {
                     if(this.plants[i][j].ball.length == 0) continue;
 
                     let removeIdx = new Array();
-                    let removeZIdx = new Array();
                     for(let k in this.plants[i][j].ball) {
                         let flag = 0;
                         this.plants[i][j].ball[k].x += this.plants[i][j].ball[k].speed;
@@ -229,7 +230,7 @@ export class gameManager {
                         if(this.plants[i][j].ball[k].x >= 1700) {
                             flag = 1;
                         }
-                        
+                        let removeZIdx = new Array();
                         for(let l = 0; l < this.zombies[i].length; l++) {
                             const atkPosS = this.plants[i][j].ball[k].x - this.plants[i][j].ball[k].img.width / 2;
                             const atkPosE = this.plants[i][j].ball[k].x + this.plants[i][j].ball[k].img.width / 2;
@@ -243,13 +244,13 @@ export class gameManager {
                                     if(this.zombies[i][l].hp <= 0) {
                                         removeZIdx.push(l);
                                         if(this.zombies[i][l] instanceof Zombie) {
-                                            this.gold += 15;
+                                            this.gold += this.zombiePrice[0];
                                         }
                                         else if(this.zombies[i][l] instanceof ConeheadZombie) {
-                                            this.gold += 30;
+                                            this.gold += this.zombiePrice[1];
                                         }
                                         else if(this.zombies[i][l] instanceof BucketheadZombie) {
-                                            this.gold += 50;
+                                            this.gold += this.zombiePrice[2];
                                         }
                                     }
                                 }
@@ -266,7 +267,7 @@ export class gameManager {
                             removeIdx.push(k);
                         }
                         for(let l = removeZIdx.length - 1; l >= 0; l--) {
-                            this.zombies[i].splice(l, 1);
+                            this.zombies[i].splice(remvoeZidx[l], 1);
                         }
                     }
                     for(let k = removeIdx.length - 1; k >= 0; k--) {
@@ -603,13 +604,13 @@ export class gameManager {
                         if(this.zombies[i][j].hp <= 0) {
                             removeIdx.push(j);
                             if(this.zombies[i][j] instanceof Zombie) {
-                                this.gold += 15;
+                                this.gold += this.zombiePrice[0];
                             }
                             else if(this.zombies[i][j] instanceof ConeheadZombie) {
-                                this.gold += 30;
+                                this.gold += this.zombiePrice[1];
                             }
                             else if(this.zombies[i][j] instanceof BucketheadZombie) {
-                                this.gold += 50;
+                                this.gold += this.zombiePrice[2];
                             }
                         }
                         break;
@@ -617,7 +618,7 @@ export class gameManager {
                 }
                 if(isConflict) {
                     for(let j = removeIdx.length - 1; j >= 0; j--) {
-                        this.zombies[i].splice(j, 1);
+                        this.zombies[i].splice(removeIdx[j], 1);
                     }
                     break;
                 }
@@ -866,7 +867,7 @@ export class gameManager {
     showGameClearScreen() {
         this.status = 1;
         $("#game-display").append(this.gameClearScreen);
-        if(this.difficulty > 3) {
+        if(this.difficulty >= 3) {
             $("#next-button").remove();
         }
         // 출력 애니메이션

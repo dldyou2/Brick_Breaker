@@ -38,14 +38,12 @@ button {
     font-weight: bold;
     margin: 1vh auto;
     padding: 1vh 3vh;
+    background-repeat: no-repeat;
+    background-size: cover;
 }
 
 #menu {
     background-color: transparent;
-}
-
-button:hover {
-    background-color: #3f3f3f3f;
 }
 
 #game-display {

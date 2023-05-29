@@ -79,7 +79,7 @@ class App {
             this.status = 1;
 
             console.log("Help");
-            const help = '<img id="helpImg" src="./images/Main/help/help_v3.png">';
+            const help = '<img id="helpImg" src="./images/Main/helpPaper/help_v3.png">';
             $("#main-menu").hide();
             $("#start-screen").append(help);
             function removeHelp() {
@@ -94,6 +94,16 @@ class App {
             let hoverSound = new Audio("./sounds/In-Game/button_hover.mp3");
             hoverSound.play();
         })
+        $("#gameStart img").on("mouseenter", function() {
+            $(this).attr("src", "./images/Main/start-hover.png");
+        }).on("mouseleave", function() {
+            $(this).attr("src", "./images/Main/start.png");
+        });
+        $("#help img").on("mouseenter", function() {
+            $(this).attr("src", "./images/Main/help-hover.png");
+        }).on("mouseleave", function() {
+            $(this).attr("src", "./images/Main/help.png");
+        });
     }
 }
 

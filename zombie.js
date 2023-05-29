@@ -159,6 +159,7 @@ export class stdZombie {
 
     knockback() {
         this.x += 2;
+        if(this.x > 1400) this.x = 1400;
     }
 
     damagedSound() {
