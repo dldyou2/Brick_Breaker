@@ -31,15 +31,26 @@ ul {
     padding-top: 10vh;
 }
 
-button {
-    border-radius: 2vw;
+li {
+    width: 50vw;
+    height: 12vh;
+
+    
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#start-screen button {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
     background-color: transparent;
-    font-size: 3vw;
-    font-weight: bold;
     margin: 1vh auto;
-    padding: 1vh 3vh;
-    background-repeat: no-repeat;
-    background-size: cover;
+}
+#start-screen button img {
+    width: 20vw;
+    object-fit: cover;
 }
 
 #menu {

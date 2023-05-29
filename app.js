@@ -19,6 +19,7 @@ class App {
         // test call
         console.log("initialize complete");
         $("#start-screen").hide();
+        $("#game-display").show();
     }
 
     /*
@@ -103,6 +104,26 @@ class App {
             $(this).attr("src", "./images/Main/help-hover.png");
         }).on("mouseleave", function() {
             $(this).attr("src", "./images/Main/help.png");
+        });
+        $("#d1 img").on("mouseenter", function() {
+            $(this).attr("src", "./images/Main/easy-hover.png");
+        }).on("mouseleave", function() {
+            $(this).attr("src", "./images/Main/easy.png");
+        });
+        $("#d2 img").on("mouseenter", function() {
+            $(this).attr("src", "./images/Main/normal-hover.png");
+        }).on("mouseleave", function() {
+            $(this).attr("src", "./images/Main/normal.png");
+        });
+        $("#d3 img").on("mouseenter", function() {
+            $(this).attr("src", "./images/Main/hard-hover.png");
+        }).on("mouseleave", function() {
+            $(this).attr("src", "./images/Main/hard.png");
+        });
+        $("#back img").on("mouseenter", function() {
+            $(this).attr("src", "./images/Main/back-hover.png");
+        }).on("mouseleave", function() {
+            $(this).attr("src", "./images/Main/back.png");
         });
     }
 }
