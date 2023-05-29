@@ -118,7 +118,7 @@ export class gameManager {
             this.zombies[i] = new Array();
         }
         this.zombiePos;
-        this.zombiePrice = [25, 40, 70];
+        this.zombiePrice = [20, 35, 60];
 
         // plant
         this.plantPrice = {
