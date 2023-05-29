@@ -267,7 +267,7 @@ export class gameManager {
                             removeIdx.push(k);
                         }
                         for(let l = removeZIdx.length - 1; l >= 0; l--) {
-                            this.zombies[i].splice(remvoeZidx[l], 1);
+                            this.zombies[i].splice(removeZIdx[l], 1);
                         }
                     }
                     for(let k = removeIdx.length - 1; k >= 0; k--) {
