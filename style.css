@@ -57,6 +57,40 @@ li {
     background-color: transparent;
 }
 
+#helpPage {
+    display: none;
+    position: relative;
+    display: flex;
+}
+
+#helpmenu1, #helpmenu2 {
+    position: absolute;
+    flex: 1;
+}
+
+.helptextMain {
+    font-size: 1.5em;
+    font-weight: bold;
+}
+
+.helpmenu {
+    margin: 1vh 0;
+    font-weight: bold;
+}
+
+#helpmenu1 {
+    top: 10%;
+    left: 20%;
+}
+
+#helpmenu2 {
+    top: 10%;
+    left: 55%;
+}
+#helpmenu2 .helpmenu {
+    margin: 5vh 0;
+}
+
 #game-display {
     width: 100vw;
     height: 100vh;
