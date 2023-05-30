@@ -83,12 +83,18 @@ class App {
             const help = '<img id="helpImg" src="./images/Main/helpPaper/help_v3.png">';
             $("#main-menu").hide();
             $("#start-screen").append(help);
+
+            function helpNext() {
+                $("#helpImg").remove();
+                $("#helpPage *").show();
+                setTimeout(removeHelp.bind(this), 4000);
+            }
             function removeHelp() {
-                $("#helpImg").remove(); 
+                $("#helpPage *").hide();
                 $("#main-menu").show();
                 this.status = 0;
             }
-            setTimeout(removeHelp.bind(this), 2000);
+            setTimeout(helpNext.bind(this), 3000);
         }.bind(this));
 
         $("button").on("mouseenter", function() {
