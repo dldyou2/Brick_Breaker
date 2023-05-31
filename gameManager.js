@@ -51,6 +51,10 @@ export class gameManager {
         this.event_keydown;
         this.event_keyup;
         this.event_click;
+        this.event_move;
+
+        this.mouseOn = 0;
+
         this.frame = 0;
 
         this.bgm = new Audio("./sounds/BGM/Day_Stage.mp3");
@@ -146,6 +150,9 @@ export class gameManager {
         this.event_keydown = this.keyDownHandler.bind(this);
         this.event_keyup = this.keyUpHandler.bind(this);
         this.event_click = this.mouseClicked.bind(this);
+        this.event_move = this.StickMoved.bind(this);
+
+        this.mouseOn = 0;
 
         this.frame = 0;
 
@@ -692,6 +699,16 @@ export class gameManager {
                 }
             }
         }
+        else if(e.key == "m") {
+            if(this.mouseOn == 0) {
+                document.addEventListener("mousemove", this.event_move, false);
+                this.mouseOn = 1;
+            }
+            else {
+                document.removeEventListener("mousemove", this.event_move);
+                this.mouseOn = 0;
+            }
+        }
     }
     keyUpHandler(e) {
         if(e.key === "Up" || e.key === "ArrowUp") {
@@ -780,6 +797,12 @@ export class gameManager {
         let y = this.resizeY(e.pageY - $("#myCanvas").offset().top);
         this.addingPlant(x, y);
     }
+
+    StickMoved(e) {
+        if(this.buyStatus != 0 || this.status == 1) return;
+        let y = this.resizeY(e.pageY - $("#myCanvas").offset().top);
+        this.stick.mouseMove(this.ctx, y);
+    }
     /*
     Author : 윤찬규
     Date : 2023-05-12
@@ -794,6 +817,7 @@ export class gameManager {
         document.removeEventListener("keydown", this.event_keydown);
         document.removeEventListener("keyup", this.event_keyup);
         document.removeEventListener("click", this.event_click);
+        document.removeEventListener("mousemove", this.event_move);
     }
     /*******************************************************************************************************/
 
