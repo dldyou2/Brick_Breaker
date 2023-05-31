@@ -62,6 +62,10 @@ export class gameManager {
 
         this.status = 0;
 
+        this.msPrev = window.performance.now();
+        this.fps = 60;
+        this.msPerFrame = 1000 / this.fps;
+
         this.init(difficulty);
     }
 
@@ -160,6 +164,7 @@ export class gameManager {
         this.bgm.loop = true;
 
         this.status = 0;
+        this.msPrev = window.performance.now();
 
         this.startGame();
     }
@@ -180,8 +185,14 @@ export class gameManager {
 
     animate() {
         this.status = 0;
-        this.ctx.clearRect(0, 0, 1400, 600);
         this.animation = window.requestAnimationFrame(this.animate.bind(this));
+        
+        const msNow = window.performance.now();
+        const msPassed = msNow - this.msPrev;
+        if(msPassed < this.msPerFrame) return;
+        this.msPrev = msNow;
+        this.ctx.clearRect(0, 0, 1400, 600);
+
         this.generateZombie();
         if (this.ball.isLeft()) {
             // test call
