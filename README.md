@@ -53,12 +53,25 @@ else {
 > KeyBoard
 
 `UP` Stick UP
+
 `DOWN` Stick DOWN
+
 `r` Ball RESPAWN
+
 `p` Game PAUSE
+
 `g` Gold CHEET (+15)
+
 `z` Kill CHEET (remove all zombies)
+
 `f` Zombie CHEET (fast zombies)
+
+'b' Thema Change
+
+'s' Sound On / Off
+
+'m' Mouse On / Off
+
 > Mouse
 
 `LClick` Purchase and Fix Plants
